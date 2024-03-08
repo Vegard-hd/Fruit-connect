@@ -1,0 +1,12 @@
+{
+  "name": "fruit-crush",
+  "version": "1.0.0",
+  "description": "The objective of the game is to align three fruits either vertically or horizontally to earn points.",
+  "main": "jquery-3.6.0.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
