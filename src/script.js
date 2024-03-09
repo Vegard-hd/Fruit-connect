@@ -14,22 +14,47 @@ const plum = `../assets/ameixa-fruit-plum-svgrepo-com.svg`;
 
 function randomFruit() {
 	let fruit;
-	let rNum = Math.floor(Math.random() * 120);
+	let rNum = Math.floor(Math.random() * 6 + 1);
 
-	if (rNum <= 20) {
-		fruit = pear;
-	} else if (rNum <= 40) {
-		fruit = mango;
-	} else if (rNum <= 60) {
-		fruit = lemon;
-	} else if (rNum <= 80) {
-		fruit = orange;
-	} else {
-		fruit = apple;
+	switch (rNum) {
+		case 1:
+			fruit = pear;
+			break;
+		case 2:
+			fruit = mango;
+			break;
+		case 3:
+			fruit = lemon;
+			break;
+		case 4:
+			fruit = orange;
+			break;
+		case 5:
+			fruit = apple;
+			break;
+		case 6:
+			fruit = plum;
+			break;
 	}
-
-	console.log(fruit);
 	return fruit;
 }
 
 randomFruit();
+// replaces img link in original with random fruits
+$("#original")
+	.children()
+	.each(function (indexInArray, valueOfElement) {
+		$(valueOfElement).attr("src", randomFruit);
+	});
+function creatRow() {
+	$("#original")
+		.clone()
+		.children()
+		.each(function (indexInArray, valueOfElement) {
+			$(valueOfElement).attr("src", randomFruit);
+		})
+		.appendTo(".main");
+}
+
+creatRow();
+creatRow();
