@@ -1,0 +1,13 @@
+/* main {
+	width: 30dvh;
+	background: purple;
+	height: 65dvh;
+	margin: auto;
+	width: 50%;
+	border: 1rem solid paleturquoise;
+	padding: 3rem;
+} */
+
+.col-1 {
+	border: 3px solid paleturquoise;
+}
