@@ -8,6 +8,14 @@
 	padding: 3rem;
 } */
 
+.container-md {
+	margin-top: 1rem;
+	padding-top: 2rem;
+	padding-bottom: 1rem;
+	border: 5px solid paleturquoise;
+}
 .col-1 {
-	border: 3px solid paleturquoise;
+	width: 6rem;
+	height: 5rem;
+	/* position: relative; */
 }

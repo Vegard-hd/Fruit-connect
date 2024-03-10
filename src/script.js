@@ -68,3 +68,11 @@ function createRow() {
 	if (arr1.length <= 8) createRow();
 }
 createRow();
+
+function hoverStart() {
+	$(this).css("width", "7rem");
+}
+function hoverEnd() {
+	$(this).css("width", "6rem");
+}
+$("img").on("mouseenter", hoverStart).on("mouseleave", hoverEnd);
