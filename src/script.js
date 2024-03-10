@@ -70,9 +70,28 @@ function createRow() {
 createRow();
 
 function hoverStart() {
-	$(this).css("width", "7rem");
+	// create a timeline
+	let tl = gsap.timeline();
+	tl.fromTo(
+		this,
+		{
+			rotation: 0,
+		},
+		{
+			scale: 2,
+			duration: 0.2,
+			rotation: 60,
+			yoyo: true,
+		}
+	);
+	tl.to(this, { rotation: -60, duration: 0.2 });
+	tl.to(this, { rotation: 0, scale: 1, duration: 0.2 });
 }
 function hoverEnd() {
-	$(this).css("width", "6rem");
+	// gsap.to(this, {
+	// 	duration: 2,
+	// 	rotation: 360,
+	// 	// yoyo: true,
+	// });
 }
 $("img").on("mouseenter", hoverStart).on("mouseleave", hoverEnd);
