@@ -32,21 +32,24 @@ function randomFruit() {
 	return fruit;
 }
 
-// replaces img link in original with random fruits
-$("#original")
-	.children()
-	.each(function (indexInArray, valueOfElement) {
-		// $(valueOfElement).attr("class");
-		$(valueOfElement).attr("src", randomFruit);
-	});
-
+//replaces "src" of each .SVG to a randomfruit
+function replaceSrc(target = "#original") {
+	$(target)
+		.children()
+		.each(function (indexInArray, valueOfElement) {
+			// $(valueOfElement).attr("class");
+			$(valueOfElement).attr("src", randomFruit);
+		});
+}
 function createRow() {
 	// Clones the original div, removes its ID attribute, and calls randomFruit() for each child.
 	let divCopy = $("#original")
 		.clone()
 		.attr("id", "")
-		.prependTo(".container-md");
+		.prependTo(".container-md")
+		.toggleClass("d-none");
 
+	replaceSrc(divCopy);
 	// Apply a fade-in animation to the cloned row
 	gsap.from(divCopy, {
 		y: "-100%",
@@ -56,21 +59,12 @@ function createRow() {
 		ease: "power4.inOut",
 	});
 
-	$(divCopy)
-		.children()
-		.each(function (indexInArray, valueOfElement) {
-			$(valueOfElement).attr("src", randomFruit);
-		});
+	//array that stores number of rows
 	let arr1 = [];
 	$("main div").each(function (index, element) {
 		// element == this
 		arr1.push(element);
 	});
-	console.log(arr1);
-	// if (arr1.length <= 8) createRow();
+	if (arr1.length <= 8) createRow();
 }
 createRow();
-
-// Example usage:
-
-// gsap.
