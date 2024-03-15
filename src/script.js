@@ -34,14 +34,14 @@ function randomFruit() {
 
 let totalFruit = 0;
 function createRandomFruit() {
+	$("img:first")
+		.clone()
+		.removeClass("d-none")
+		.attr("src", randomFruit)
+		.prependTo("#column-1");
+	totalFruit = $("img").length - 1;
 	if (totalFruit <= 77) {
-		let imgCopy = $("img:first")
-			.clone()
-			.removeClass("d-none")
-			.attr("src", randomFruit)
-			.prependTo("#original");
-		totalFruit = $("img").length - 1;
-		popAnimation(imgCopy);
+		// popAnimation(imgCopy);
 	} else {
 		eventListeners();
 	}
