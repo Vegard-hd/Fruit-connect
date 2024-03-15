@@ -1,3 +1,6 @@
+import CreateFruitRow from "./CreateFruitCLASS.js";
+
+// import CreateFruitRow from "./CreateFruitCLASS";
 const pear = `../assets/fruit-pear-pears-svgrepo-com.svg`;
 const mango = `../assets/fruit-manga-mango-svgrepo-com.svg`;
 const lemon = `../assets/fruit-limao-limon-svgrepo-com.svg`;
@@ -32,43 +35,12 @@ function randomFruit() {
 }
 /// TODO- make each row vertical and independent
 
-let totalFruit = 0;
-function createRandomFruit() {
-	$("img:first")
-		.clone()
-		.removeClass("d-none")
-		.attr("src", randomFruit)
-		.prependTo("#column-1");
-	totalFruit = $("img").length - 1;
-	if (totalFruit <= 77) {
-		// popAnimation(imgCopy);
-	} else {
-		eventListeners();
-	}
-}
 function removeFruit() {
 	$(this).remove();
 	console.log("removed fruit");
 	totalFruit = $("img").length - 1;
 }
-function popAnimation(target) {
-	gsap.fromTo(
-		target,
-		{
-			scale: 0, // Start with 0 scale (hidden)
-			opacity: 0, // Start with 0 opacity
-		},
-		{
-			scale: 1, // Pop to full size
-			opacity: 1, // Fade in
-			duration: 0.04,
-			ease: "elastic.out(1, 0.3)",
-			onComplete: function () {
-				createRandomFruit();
-			},
-		}
-	);
-}
+
 function imgHover() {
 	//create a timeline
 	let tl = gsap.timeline();
@@ -127,9 +99,16 @@ function imgClick() {
 		ease: "elastic.in(1,0.3)",
 	});
 }
-
+let test1 = new CreateFruitRow();
+test1.Start;
+console.log(test1);
 $(".btn").on("click", function () {
-	createRandomFruit();
+	console.log("clicked");
+	const row2 = new CreateFruitRow(2);
+	row2.Start;
+	let clickCount;
+	clickCount += 1;
+	new CreateFruitRow(clickCount);
 });
 function eventListeners() {
 	$("img").on("mouseover", imgHover);
