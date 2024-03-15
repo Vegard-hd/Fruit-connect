@@ -98,19 +98,58 @@ function imgClick() {
 	});
 }
 
+async function createRow(rowNumber) {
+	const fruitsInRowSelector = `#column-${rowNumber}`;
+	const fruitsInRow = $(fruitsInRowSelector).length;
+	async function createRandomFruit() {
+		await new Promise((resolve) => {
+			setTimeout(() => {
+				new CreateFruit(randomFruit(), rowNumber);
+				resolve();
+			}, 200);
+		});
+	}
+	await createRandomFruit();
+	await createRandomFruit();
+	await createRandomFruit();
+	await createRandomFruit();
+	await createRandomFruit();
+	await createRandomFruit();
+	await createRandomFruit();
+	return fruitsInRow;
+}
+
+// Example usage: Create fruits in row 1
+function createFruitGrid() {
+	function fillGrid() {
+		for (let i = 1; i <= 12; i++) {
+			createRow(i);
+		}
+	}
+	let tl = gsap.timeline();
+	tl.to($(".container-sm"), {
+		opacity: 1,
+		scale: 1,
+		duration: 2,
+		height: "40rem",
+		width: "85rem",
+		ease: "power4.inOut",
+		onComplete: function () {
+			fillGrid();
+		},
+	});
+	// createRow(1);
+	// createRow(2);
+}
+
 function eventListeners() {
-	$(".btn").on("click", function () {});
+	$(".btn").on("click", function () {
+		createFruitGrid();
+	});
 	$("img").on("mouseover", imgHover);
 	$("img").on("click", imgClick);
 }
-function createRow(rowNumber) {
-	let fruitsInRowSelector = `#column-${rowNumber}`;
-	let fruitsInRow = $(fruitsInRowSelector).length;
-	let randomNum = Math.floor(Math.random() * 100);
-	let className = `className${randomNum}`;
-	className = new CreateFruit(randomFruit(), rowNumber);
-}
-createRow(1);
+
 $(function () {
 	eventListeners();
 });
