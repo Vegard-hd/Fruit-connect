@@ -1,6 +1,5 @@
-import CreateFruitRow from "./CreateFruitCLASS.js";
+import CreateFruit from "./createFruit.js";
 
-// import CreateFruitRow from "./CreateFruitCLASS";
 const pear = `../assets/fruit-pear-pears-svgrepo-com.svg`;
 const mango = `../assets/fruit-manga-mango-svgrepo-com.svg`;
 const lemon = `../assets/fruit-limao-limon-svgrepo-com.svg`;
@@ -33,7 +32,6 @@ function randomFruit() {
 	}
 	return fruit;
 }
-/// TODO- make each row vertical and independent
 
 function removeFruit() {
 	$(this).remove();
@@ -99,18 +97,20 @@ function imgClick() {
 		ease: "elastic.in(1,0.3)",
 	});
 }
-let test1 = new CreateFruitRow();
-test1.Start;
-console.log(test1);
-$(".btn").on("click", function () {
-	console.log("clicked");
-	const row2 = new CreateFruitRow(2);
-	row2.Start;
-	let clickCount;
-	clickCount += 1;
-	new CreateFruitRow(clickCount);
-});
+
 function eventListeners() {
+	$(".btn").on("click", function () {});
 	$("img").on("mouseover", imgHover);
 	$("img").on("click", imgClick);
 }
+function createRow(rowNumber) {
+	let fruitsInRowSelector = `#column-${rowNumber}`;
+	let fruitsInRow = $(fruitsInRowSelector).length;
+	let randomNum = Math.floor(Math.random() * 100);
+	let className = `className${randomNum}`;
+	className = new CreateFruit(randomFruit(), rowNumber);
+}
+createRow(1);
+$(function () {
+	eventListeners();
+});
