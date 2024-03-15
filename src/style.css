@@ -20,3 +20,6 @@ img {
 	width: 6rem;
 	height: 5rem;
 }
+.unclickable-element {
+	pointer-events: none;
+}

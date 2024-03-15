@@ -30,51 +30,19 @@ function randomFruit() {
 	}
 	return fruit;
 }
-let pearCount = 0;
-let mangoCount = 0;
-let lemonCount = 0;
-let orangeCount = 0;
-let appleCount = 0;
-let plumCount = 0;
-var totalFruit = 0;
-function fruitCounter(target = "") {
-	if ($(target).attr("src") === pear) pearCount += 1;
-	else if ($(target).attr("src") === mango) mangoCount += 1;
-	else if ($(target).attr("src") === lemon) lemonCount += 1;
-	else if ($(target).attr("src") === orange) orangeCount += 1;
-	else if ($(target).attr("src") === apple) appleCount += 1;
-	else if ($(target).attr("src") === plum) plumCount += 1;
-	totalFruit =
-		pearCount + mangoCount + lemonCount + orangeCount + appleCount + plumCount;
-	console.log(
-		pearCount + mangoCount + lemonCount + orangeCount + appleCount + plumCount
-	);
-	return totalFruit;
-}
-
-function fruitDelete(target = "") {
-	if ($(target).attr("src") === pear) pearCount -= 1;
-	else if ($(target).attr("src") === mango) mangoCount -= 1;
-	else if ($(target).attr("src") === lemon) lemonCount -= 1;
-	else if ($(target).attr("src") === orange) orangeCount -= 1;
-	else if ($(target).attr("src") === apple) appleCount -= 1;
-	else if ($(target).attr("src") === plum) plumCount -= 1;
-	totalFruit =
-		pearCount + mangoCount + lemonCount + orangeCount + appleCount + plumCount;
-	console.log(
-		pearCount + mangoCount + lemonCount + orangeCount + appleCount + plumCount
-	);
-	return totalFruit;
-}
-
+let totalFruit = 0;
 function createRandomFruit() {
-	let imgCopy = $("img:first")
-		.clone()
-		.removeClass("d-none")
-		.attr("src", randomFruit)
-		.prependTo("#original");
-	fruitCounter("img:first");
-	popAnimation(imgCopy);
+	if (totalFruit <= 77) {
+		let imgCopy = $("img:first")
+			.clone()
+			.removeClass("d-none")
+			.attr("src", randomFruit)
+			.prependTo("#original");
+		totalFruit = $("img").length - 1;
+		popAnimation(imgCopy);
+	} else {
+		eventListeners();
+	}
 }
 function popAnimation(target) {
 	gsap.fromTo(
@@ -89,10 +57,7 @@ function popAnimation(target) {
 			duration: 0.04,
 			ease: "elastic.out(1, 0.3)",
 			onComplete: function () {
-				if (totalFruit < 78) createRandomFruit();
-				else {
-					eventListeners();
-				}
+				createRandomFruit();
 			},
 		}
 	);
@@ -121,13 +86,14 @@ function imgHover() {
 }
 
 function imgClick() {
+	$(this).addClass("unclickable-element");
 	const removeElement = () => {
-		fruitDelete(this);
-		if (totalFruit < 78) createRandomFruit();
+		createRandomFruit();
 		return $(this).remove();
 	};
 	let tl = gsap.timeline();
 	let tl2 = gsap.timeline();
+	let tl3 = gsap.timeline();
 	let randomX = Math.floor(Math.random() * 1000);
 	tl.to(this, { y: -300, x: randomX, scale: 3, duration: 3 });
 	tl2.to(this, { rotation: -360, duration: 0.15 });
@@ -135,15 +101,22 @@ function imgClick() {
 		rotation: 360,
 		duration: 1,
 	});
-	tl2.to(this, {
+	tl3.to(this, {
+		scale: 2,
+		duration: 0.2,
+		ease: "elastic.in(1,0.3)",
+	});
+	tl3.to(this, {
+		scale: 0,
 		opacity: 0,
 		duration: 1,
-		onComplete: removeElement,
+		ease: "elastic.in(1,0.3)",
+		// onComplete: removeElement,
 	});
 }
 
 $(".btn").on("click", function () {
-	if (totalFruit < 78) createRandomFruit();
+	createRandomFruit();
 });
 function eventListeners() {
 	$("img").on("mouseover", imgHover);
