@@ -30,6 +30,8 @@ function randomFruit() {
 	}
 	return fruit;
 }
+/// TODO- make each row vertical and independent
+
 let totalFruit = 0;
 function createRandomFruit() {
 	if (totalFruit <= 77) {
