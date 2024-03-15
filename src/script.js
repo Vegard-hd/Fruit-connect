@@ -44,6 +44,11 @@ function createRandomFruit() {
 		eventListeners();
 	}
 }
+function removeFruit() {
+	$(this).remove();
+	console.log("removed fruit");
+	totalFruit = $("img").length - 1;
+}
 function popAnimation(target) {
 	gsap.fromTo(
 		target,
@@ -87,15 +92,22 @@ function imgHover() {
 
 function imgClick() {
 	$(this).addClass("unclickable-element");
-	const removeElement = () => {
-		createRandomFruit();
-		return $(this).remove();
-	};
+	// removeFruit(this);
 	let tl = gsap.timeline();
 	let tl2 = gsap.timeline();
 	let tl3 = gsap.timeline();
 	let randomX = Math.floor(Math.random() * 1000);
-	tl.to(this, { y: -300, x: randomX, scale: 3, duration: 3 });
+	tl.to(this, {
+		y: -300,
+		x: randomX,
+		scale: 3,
+		duration: 3,
+		onComplete: () => {
+			$(this).remove();
+			console.log("removed fruit");
+			totalFruit = $("img").length - 1;
+		},
+	});
 	tl2.to(this, { rotation: -360, duration: 0.15 });
 	tl2.to(this, {
 		rotation: 360,
@@ -111,7 +123,6 @@ function imgClick() {
 		opacity: 0,
 		duration: 1,
 		ease: "elastic.in(1,0.3)",
-		// onComplete: removeElement,
 	});
 }
 
@@ -122,11 +133,3 @@ function eventListeners() {
 	$("img").on("mouseover", imgHover);
 	$("img").on("click", imgClick);
 }
-//make just one big flexbox of fruits
-
-// let pearCount = 0;
-// let mangoCount = 0;
-// let lemonCount = 0;
-// let orangeCount = 0;
-// let appleCount = 0;
-// let plumCount = 0;
