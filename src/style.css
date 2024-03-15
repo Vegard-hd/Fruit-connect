@@ -9,6 +9,7 @@
 } */
 img {
 	z-index: 99;
+	width: 5dvh;
 }
 .container-sm {
 	margin-top: 1rem;
@@ -16,7 +17,13 @@ img {
 	padding-bottom: 1rem;
 	border: 5px solid paleturquoise;
 }
-.col-1 {
+.d-flex {
+	margin-top: 1rem;
+	padding-top: 2rem;
+	padding-bottom: 1rem;
+	border: 5px solid paleturquoise;
+}
+.col {
 	width: 6rem;
 	height: 5rem;
 }
