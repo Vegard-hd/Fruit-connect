@@ -9,7 +9,8 @@ export default class CreateFruit {
 			.removeClass("d-none")
 			.attr("src", this.whatFruit)
 			.prependTo(this.jqIdTarget); // Use 'this.jqIdTarget'
-		this.totalFruit = $("img").length;
+		this.totalFruit;
+
 		gsap.fromTo(
 			this.target,
 			{
@@ -23,5 +24,10 @@ export default class CreateFruit {
 				ease: "elastic.out(1, 0.3)",
 			}
 		);
+	}
+	static fruitCount() {
+		this.totalFruit = $("img").length;
+		console.log(this.totalFruit);
+		return this.totalFruit;
 	}
 }

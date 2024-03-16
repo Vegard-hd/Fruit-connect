@@ -6,6 +6,7 @@ const lemon = `../assets/fruit-limao-limon-svgrepo-com.svg`;
 const orange = `../assets/fruit-laranja-orange-svgrepo-com.svg`;
 const apple = `../assets/apple-apples-fruit-svgrepo-com.svg`;
 const plum = `../assets/ameixa-fruit-plum-svgrepo-com.svg`;
+
 function randomFruit() {
 	let fruit;
 	let rNum = Math.floor(Math.random() * 6 + 1);
@@ -36,7 +37,6 @@ function randomFruit() {
 function removeFruit() {
 	$(this).remove();
 	console.log("removed fruit");
-	totalFruit = $("img").length - 1;
 }
 
 function imgHover() {
@@ -64,7 +64,8 @@ function imgHover() {
 
 function imgClick() {
 	$(this).addClass("unclickable-element");
-	// removeFruit(this);
+	console.log("removed fruit");
+
 	let tl = gsap.timeline();
 	let tl2 = gsap.timeline();
 	let tl3 = gsap.timeline();
@@ -74,11 +75,7 @@ function imgClick() {
 		x: randomX,
 		scale: 3,
 		duration: 3,
-		onComplete: () => {
-			$(this).remove();
-			console.log("removed fruit");
-			totalFruit = $("img").length - 1;
-		},
+		onComplete: () => $(this).remove(),
 	});
 	tl2.to(this, { rotation: -360, duration: 0.15 });
 	tl2.to(this, {
@@ -98,9 +95,12 @@ function imgClick() {
 	});
 }
 
+let fruitsInRow;
 async function createRow(rowNumber) {
-	const fruitsInRowSelector = `#column-${rowNumber}`;
-	const fruitsInRow = $(fruitsInRowSelector).length;
+	const fruitsInRowSelector = `#column-${rowNumber} img`;
+	console.log(fruitsInRowSelector);
+	fruitsInRow = $(fruitsInRowSelector).length;
+	console.log(fruitsInRow);
 	async function createRandomFruit() {
 		await new Promise((resolve) => {
 			setTimeout(() => {
@@ -109,14 +109,18 @@ async function createRow(rowNumber) {
 			}, 200);
 		});
 	}
-	await createRandomFruit();
-	await createRandomFruit();
-	await createRandomFruit();
-	await createRandomFruit();
-	await createRandomFruit();
-	await createRandomFruit();
-	await createRandomFruit();
-	return fruitsInRow;
+	if (fruitsInRow <= 7) {
+		await createRandomFruit();
+		await createRow(rowNumber);
+	} else eventListeners();
+	// await createRandomFruit();
+	// await createRandomFruit();
+	// await createRandomFruit();
+	// await createRandomFruit();
+	// await createRandomFruit();
+	// await createRandomFruit();
+	// await createRandomFruit();
+	// return fruitsInRow;
 }
 
 // Example usage: Create fruits in row 1
@@ -138,18 +142,19 @@ function createFruitGrid() {
 			fillGrid();
 		},
 	});
-	// createRow(1);
-	// createRow(2);
-}
-
-function eventListeners() {
-	$(".btn").on("click", function () {
-		createFruitGrid();
-	});
-	$("img").on("mouseover", imgHover);
-	$("img").on("click", imgClick);
 }
 
 $(function () {
-	eventListeners();
+	$(".btn").on("click", function () {
+		createFruitGrid();
+	});
 });
+function eventListeners() {
+	if (CreateFruit.fruitCount() >= 96) {
+		console.log("Called eventlisteners");
+		$(".col").on("mouseover", function () {
+			imgHover;
+		});
+		$(".col").on("click", imgClick);
+	}
+}
