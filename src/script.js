@@ -97,30 +97,25 @@ function imgClick() {
 
 let fruitsInRow;
 async function createRow(rowNumber) {
-	const fruitsInRowSelector = `#column-${rowNumber} img`;
-	console.log(fruitsInRowSelector);
-	fruitsInRow = $(fruitsInRowSelector).length;
-	console.log(fruitsInRow);
-	async function createRandomFruit() {
+	const fruitsInRowSelector = `#column-${rowNumber}`;
+	fruitsInRow = $(fruitsInRowSelector)[0].children.length;
+	async function fillRow(id) {
+		let fruitID = `c-${rowNumber}-f${id}`;
 		await new Promise((resolve) => {
 			setTimeout(() => {
-				new CreateFruit(randomFruit(), rowNumber);
+				new CreateFruit(randomFruit(), rowNumber, fruitID);
 				resolve();
 			}, 200);
 		});
 	}
-	if (fruitsInRow <= 7) {
-		await createRandomFruit();
-		await createRow(rowNumber);
-	} else eventListeners();
-	// await createRandomFruit();
-	// await createRandomFruit();
-	// await createRandomFruit();
-	// await createRandomFruit();
-	// await createRandomFruit();
-	// await createRandomFruit();
-	// await createRandomFruit();
-	// return fruitsInRow;
+
+	for (let i = 1; i <= 7; i++) {
+		await fillRow(i);
+		// await createRow(rowNumber);
+	}
+	fruitsInRow = $(fruitsInRowSelector)[0].children.length;
+	console.log(fruitsInRow);
+	eventListeners();
 }
 
 // Example usage: Create fruits in row 1
@@ -152,9 +147,7 @@ $(function () {
 function eventListeners() {
 	if (CreateFruit.fruitCount() >= 96) {
 		console.log("Called eventlisteners");
-		$(".col").on("mouseover", function () {
-			imgHover;
-		});
+		$(".col").on("mouseover", imgHover);
 		$(".col").on("click", imgClick);
 	}
 }

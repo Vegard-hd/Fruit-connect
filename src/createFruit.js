@@ -1,5 +1,6 @@
 export default class CreateFruit {
-	constructor(whatFruit, rowNumber) {
+	constructor(whatFruit, rowNumber, id) {
+		this.id = id;
 		this.whatFruit = whatFruit;
 		this.rowNumber = rowNumber;
 		this.imgTarget = `#column-${this.rowNumber} img:first`;
@@ -8,6 +9,7 @@ export default class CreateFruit {
 			.clone()
 			.removeClass("d-none")
 			.attr("src", this.whatFruit)
+			.attr("id", this.id)
 			.prependTo(this.jqIdTarget); // Use 'this.jqIdTarget'
 		this.totalFruit;
 
