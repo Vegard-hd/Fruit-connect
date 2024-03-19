@@ -8,6 +8,8 @@ export default class CreateFruit {
 		this.target = $(this.imgTarget);
 	}
 	cloneFruit() {
+		this.imgTarget = `#column-${this.rowNumber} img:first`;
+		this.jqIdTarget = `#column-${this.rowNumber}`;
 		$(this.target)
 			.clone()
 			.removeClass("d-none")

@@ -93,14 +93,11 @@ function createFruitGrid() {
 function imgClick() {
 	function getColumnNum(target) {
 		const copyThisID = $(target).attr("id");
-		const thisColumnNum = parseInt(copyThisID.match(/\d+/)[0], 10);
-		return thisColumnNum;
+		return copyThisID.at(2);
 	}
-	const columnTarg = `#column-${getColumnNum(this)}`;
-	const cloneTrg = $(this).clone();
 	setTimeout(() => {
 		$(this).remove();
-		new CreateFruit(randomFruit(), getColumnNum(), fruitID);
+		new CreateFruit(randomFruit(), getColumnNum(this)).cloneFruit();
 		eventListeners();
 	}, 3500);
 	$(this).addClass("unclickable-element");
