@@ -8,17 +8,18 @@
 	padding: 3rem;
 } */
 img {
+	opacity: 0;
+	scale: 0;
 	z-index: 99;
 	width: 5dvh;
 }
 .container-sm {
-	margin-top: 1rem;
-	padding-top: 2rem;
+	margin-top: 2rem;
+	padding-top: 1rem;
 	padding-bottom: 1rem;
 	border: 5px solid rgb(227, 5, 5);
-	opacity: 0;
-	height: 1rem;
-	width: 1rem;
+	height: 38rem;
+	width: 50rem;
 }
 .d-flex {
 	margin-top: 1rem;
