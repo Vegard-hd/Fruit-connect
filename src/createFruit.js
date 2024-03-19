@@ -1,18 +1,18 @@
 export default class CreateFruit {
-	constructor(whatFruit, rowNumber, id) {
-		this.id = id;
+	constructor(whatFruit, rowNumber) {
 		this.whatFruit = whatFruit;
 		this.rowNumber = rowNumber;
 		this.imgTarget = `#column-${this.rowNumber} img:first`;
 		this.jqIdTarget = `#column-${this.rowNumber}`;
-		this.target = $(this.imgTarget)
+		this.totalFruit;
+		this.target = $(this.imgTarget);
+	}
+	cloneFruit() {
+		$(this.target)
 			.clone()
 			.removeClass("d-none")
 			.attr("src", this.whatFruit)
-			.attr("id", this.id)
-			.prependTo(this.jqIdTarget); // Use 'this.jqIdTarget'
-		this.totalFruit;
-
+			.prependTo(this.jqIdTarget);
 		gsap.fromTo(
 			this.target,
 			{
