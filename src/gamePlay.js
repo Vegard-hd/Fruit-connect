@@ -10,8 +10,6 @@ function observeDom(target = 1) {
 		for (const mutation of mutationList) {
 			if (mutation.type === "childList") {
 				console.log("A child node has been added or removed.");
-			} else if (mutation.type === "attributes") {
-				console.log(`The ${mutation.attributeName} attribute was modified.`);
 			}
 		}
 	};
@@ -45,6 +43,14 @@ function clickHandler() {
 
 $(function () {
 	$("button").one("click", function () {
+		gsap.to($(".container-sm"), {
+			duration: 0.5,
+			opacity: 1,
+			scale: 1,
+			width: "100%",
+			height: "100%",
+			ease: "back.out(2)", // Add more overshoot (adjust as desired)
+		});
 		console.log("clicked start");
 		GameStart().then(setUpObservers(12)).then(clickHandler());
 	});

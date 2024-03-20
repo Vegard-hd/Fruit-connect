@@ -1,6 +1,16 @@
 import randomFruit from "./RandomFruit.js";
 function CreateImg() {
 	const img = document.createElement("img");
+	// Set initial properties (0 opacity and 0 scale)
+	gsap.set($(img), { opacity: 0, scale: 0 });
+
+	// Create the pop animation
+	gsap.to($(img), {
+		duration: 0.5,
+		opacity: 1,
+		scale: 1,
+		ease: "back.out(2)", // Adjust easing as desired
+	});
 	return $(img)
 		.addClass("col")
 		.attr("src", randomFruit())

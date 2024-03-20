@@ -1,17 +1,17 @@
 img {
-	/* opacity: 0;
-	scale: 0; */
 	z-index: 99;
-	width: 100%;
+	border: 2px solid, yellow;
 }
 .container-sm {
+	opacity: 0;
+	scale: 0;
 	margin-top: 2rem;
 	padding-top: 1rem;
 	padding-bottom: 1rem;
 	border: 5px solid rgb(227, 5, 5);
-	height: 100%;
-	width: 100%;
-	background: rgb(102, 63, 102);
+	height: 0%;
+	width: 0%;
+	/* background: rgb(102, 63, 102); */
 }
 .d-flex {
 	margin-top: 1rem;
