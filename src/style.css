@@ -8,8 +8,8 @@
 	padding: 3rem;
 } */
 img {
-	opacity: 0;
-	scale: 0;
+	/* opacity: 0;
+	scale: 0; */
 	z-index: 99;
 	width: 5dvh;
 }
