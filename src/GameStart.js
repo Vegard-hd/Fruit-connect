@@ -1,13 +1,12 @@
 import randomFruit from "./RandomFruit.js";
-export default function GameStart() {
-	function CreateImg() {
-		const img = document.createElement("img");
-		return $(img)
-			.addClass("col")
-			.attr("src", randomFruit())
-			.attr("alt", "a fruit");
-	}
-
+function CreateImg() {
+	const img = document.createElement("img");
+	return $(img)
+		.addClass("col")
+		.attr("src", randomFruit())
+		.attr("alt", "a fruit");
+}
+async function GameStart() {
 	function CreateColumn(columnNumber) {
 		const div = document.createElement("div");
 		const divClass = `column-${columnNumber}`;
@@ -23,10 +22,15 @@ export default function GameStart() {
 			.prepend(CreateImg().addClass(`inside-col-${columnNumber}`));
 		return $(".row").prepend(parent);
 	}
-	const recursiveColum = (columnsToCreate) => {
+	function recursiveColum(columnsToCreate) {
 		if (columnsToCreate <= 0) return;
 		CreateColumn(columnsToCreate);
 		return recursiveColum(columnsToCreate - 1);
-	};
-	return recursiveColum(12);
+	}
+	await new Promise((resolve, reject) => {
+		recursiveColum(12);
+		resolve();
+	});
+	// return recursiveColum(12);
 }
+export { GameStart, CreateImg };
