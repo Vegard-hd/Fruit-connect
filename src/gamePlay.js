@@ -26,12 +26,26 @@ function setUpObservers(numberOfObservers) {
 	if (numberOfObservers <= 0) return;
 	console.log(numberOfObservers);
 	observeDom(numberOfObservers);
-	setUpObservers(numberOfObservers - 1);
+	return setUpObservers(numberOfObservers - 1);
 }
+function clickHandler() {
+	return $("img").on("click", function () {
+		let thisClass = $(this).attr("class");
+		$(this).remove();
+		const thisColumnNumber = () => {
+			if (thisClass.length === 16) return thisClass.at(-1);
+			let twoDigitClassEnd = thisClass.at(-2) + thisClass.at(-1);
+			return twoDigitClassEnd;
+		};
+		console.log(thisColumnNumber());
+		let columnSelector = `#column-${thisColumnNumber()}`;
+		return $(columnSelector).prepend(CreateImg());
+	});
+}
+
 $(function () {
 	$("button").one("click", function () {
 		console.log("clicked start");
-		GameStart().then(setUpObservers(12));
+		GameStart().then(setUpObservers(12)).then(clickHandler());
 	});
-	// $("img").on("click",function(){})
 });

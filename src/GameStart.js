@@ -31,6 +31,5 @@ async function GameStart() {
 		recursiveColum(12);
 		resolve();
 	});
-	// return recursiveColum(12);
 }
 export { GameStart, CreateImg };
