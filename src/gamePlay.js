@@ -29,21 +29,50 @@ function setUpObservers(numberOfObservers) {
 //TODO bind new onClick event to each new fruit
 //make a new function CreateFruitWithEventListener
 //That abstracts logic from clickHandler
-function clickHandler() {
+async function removeFruit(target) {
+	const remove = () => {
+		$(target).remove();
+	};
+	const myPromise = new Promise((resolve) => {
+		setTimeout(() => {
+			resolve();
+		}, 200);
+	});
+	await myPromise.then(remove);
+}
+async function insertFruitTop(target) {
+	console.log("InsertFruit called!");
+	const thisClass = $(target).attr("class");
+
+	const thisColumnNumber = () => {
+		if (thisClass.length === 16) return thisClass.at(-1);
+		let twoDigitClassEnd = thisClass.at(-2) + thisClass.at(-1);
+		return twoDigitClassEnd;
+	};
+	const currentColumn = thisColumnNumber();
+	const columnSelector = `#column-${currentColumn}`;
+	const newFruit = CreateImg().addClass(`inside-col-${columnSelector}`);
+	const myPromise = new Promise((resolve) => {
+		setTimeout(() => {
+			resolve();
+			console.log("Resolved Promise");
+		}, 400);
+	});
+	function insertFruit() {
+		console.log("insertFruit called");
+		return $(columnSelector).prepend(newFruit);
+	}
+	await myPromise.then(insertFruit).then(observeDom(currentColumn));
+	// observeDom(thisColumnNumber());
+}
+function removeHandler() {
 	$("img").on("click", function () {
-		let thisClass = $(this).attr("class");
-		$(this).remove();
-		const thisColumnNumber = () => {
-			if (thisClass.length === 16) return thisClass.at(-1);
-			let twoDigitClassEnd = thisClass.at(-2) + thisClass.at(-1);
-			return twoDigitClassEnd;
-		};
-		let columnSelector = `#column-${thisColumnNumber()}`;
-		let newFruit = CreateImg().addClass(`inside-col-${thisColumnNumber()}`);
-		$(columnSelector)
-			.prepend(newFruit)
-			.on("click", function () {});
-		observeDom(thisColumnNumber());
+		removeFruit(this);
+	});
+}
+function addFruitHandler() {
+	$("img").on("click", function () {
+		insertFruitTop(this);
 	});
 }
 
@@ -58,6 +87,9 @@ $(function () {
 			ease: "back.out(2)",
 		});
 		console.log("clicked start");
-		GameStart().then(setUpObservers(12)).then(clickHandler());
+		GameStart()
+			.then(setUpObservers(12))
+			.then(removeHandler)
+			.then(addFruitHandler);
 	});
 });
