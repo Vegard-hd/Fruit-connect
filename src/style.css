@@ -1,6 +1,11 @@
 img {
 	z-index: 99;
 	border: 2px solid, yellow;
+	-webkit-user-drag: none;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
 }
 .container-sm {
 	opacity: 0;
@@ -23,6 +28,6 @@ img {
 	width: 6rem;
 	height: 5rem;
 }
-.unclickable-element {
+#unclickable-element {
 	pointer-events: none;
 }

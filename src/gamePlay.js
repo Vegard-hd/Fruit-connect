@@ -5,12 +5,23 @@ function observeDom(target = 1) {
 	// Options for the observer (which mutations to observe)
 	const config = { attributes: false, childList: true, subtree: true };
 	// Callback function to execute when mutations are observed
+	let clicked = false;
 	const callback = (mutationList, observer) => {
 		for (const mutation of mutationList) {
-			console.log(mutation.target.firstChild);
+			console.log(mutation);
 			mutation.target.firstChild.addEventListener("click", function () {
-				insertFruitTop(this), removeFruit(this);
+				if (clicked === true) return;
+				else {
+					console.log(clicked);
+					clicked = true;
+					insertFruitTop(this), removeFruit(this);
+					setTimeout(() => {
+						clicked = false;
+					}, 150);
+				}
 			});
+			if (mutation.target.childElementCount > 7)
+				mutation.target.lastChild.remove();
 			// console.log(mutation.target.firstchild);
 			if (mutation.type === "childList") {
 				console.log(observer);
@@ -32,7 +43,7 @@ function setUpObservers(numberOfObservers) {
 
 async function removeFruit(target) {
 	//This fixes current bug but ... it does not work
-	// $(target).addClass("unclickable-element");
+	$(target).attr("id", "unclickable-element");
 	const remove = () => {
 		$(target).remove();
 	};
@@ -44,9 +55,7 @@ async function removeFruit(target) {
 	await myPromise.then(remove);
 }
 async function insertFruitTop(target) {
-	console.log("InsertFruit called!");
 	const thisClass = $(target).attr("class");
-
 	const thisColumnNumber = () => {
 		if (thisClass.length === 16) return thisClass.at(-1);
 		let twoDigitClassEnd = thisClass.at(-2) + thisClass.at(-1);
@@ -63,10 +72,8 @@ async function insertFruitTop(target) {
 	});
 	function insertFruit() {
 		$(columnSelector).prepend(newFruit);
-		// Object.assign(newFruit, addFruitHandler());
 	}
 	await myPromise.then(insertFruit);
-	// observeDom(thisColumnNumber());
 }
 function removeHandler() {
 	$("img").on("click", function () {
