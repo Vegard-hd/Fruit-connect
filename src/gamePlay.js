@@ -30,10 +30,9 @@ function setUpObservers(numberOfObservers) {
 	return setUpObservers(numberOfObservers - 1);
 }
 
-//TODO bind new onClick event to each new fruit
-//make a new function CreateFruitWithEventListener
-//That abstracts logic from clickHandler
 async function removeFruit(target) {
+	//This fixes current bug but ... it does not work
+	// $(target).addClass("unclickable-element");
 	const remove = () => {
 		$(target).remove();
 	};
