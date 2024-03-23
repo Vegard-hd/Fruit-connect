@@ -7,9 +7,13 @@ function observeDom(target = 1) {
 	// Callback function to execute when mutations are observed
 	const callback = (mutationList, observer) => {
 		for (const mutation of mutationList) {
+			console.log(mutation.target.firstChild);
+			mutation.target.firstChild.addEventListener("click", function () {
+				insertFruitTop(this), removeFruit(this);
+			});
+			// console.log(mutation.target.firstchild);
 			if (mutation.type === "childList") {
 				console.log(observer);
-				observer.disconnect();
 			}
 		}
 	};
@@ -51,7 +55,7 @@ async function insertFruitTop(target) {
 	};
 	const currentColumn = thisColumnNumber();
 	const columnSelector = `#column-${currentColumn}`;
-	const newFruit = CreateImg().addClass(`inside-col-${columnSelector}`);
+	const newFruit = CreateImg().addClass(`inside-col-${currentColumn}`);
 	const myPromise = new Promise((resolve) => {
 		setTimeout(() => {
 			resolve();
@@ -59,10 +63,10 @@ async function insertFruitTop(target) {
 		}, 400);
 	});
 	function insertFruit() {
-		console.log("insertFruit called");
-		return $(columnSelector).prepend(newFruit);
+		$(columnSelector).prepend(newFruit);
+		// Object.assign(newFruit, addFruitHandler());
 	}
-	await myPromise.then(insertFruit).then(observeDom(currentColumn));
+	await myPromise.then(insertFruit);
 	// observeDom(thisColumnNumber());
 }
 function removeHandler() {
@@ -75,7 +79,9 @@ function addFruitHandler() {
 		insertFruitTop(this);
 	});
 }
-
+function testHandler() {
+	return console.log("this is a test handler");
+}
 $(function () {
 	$("button").one("click", function () {
 		gsap.to($(".container-sm"), {
@@ -88,8 +94,8 @@ $(function () {
 		});
 		console.log("clicked start");
 		GameStart()
-			.then(setUpObservers(12))
 			.then(removeHandler)
-			.then(addFruitHandler);
+			.then(addFruitHandler)
+			.then(setUpObservers(12));
 	});
 });
