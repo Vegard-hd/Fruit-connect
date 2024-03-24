@@ -5,26 +5,25 @@ function observeDom(target = 1) {
 	// Options for the observer (which mutations to observe)
 	const config = { attributes: false, childList: true, subtree: true };
 	// Callback function to execute when mutations are observed
-	let clicked = false;
 	const callback = (mutationList, observer) => {
 		for (const mutation of mutationList) {
-			console.log(mutation);
-			mutation.target.firstChild.addEventListener("click", function () {
-				if (clicked === true) return;
-				else {
-					console.log(clicked);
-					clicked = true;
-					insertFruitTop(this), removeFruit(this);
-					setTimeout(() => {
-						clicked = false;
-					}, 150);
-				}
-			});
-			if (mutation.target.childElementCount > 7)
-				mutation.target.lastChild.remove();
-			// console.log(mutation.target.firstchild);
-			if (mutation.type === "childList") {
-				console.log(observer);
+			if (!mutation.target.firstChild.getAttribute("click-listener")) {
+				mutation.target.firstChild.setAttribute("click-listener", true);
+				mutation.target.firstChild.addEventListener("click", async function () {
+					await removeFruit(this).then(
+						insertFruitTop(mutation.target.children)
+					);
+					if (mutation.target.childElementCount > 7)
+						mutation.target.lastChild.remove();
+					else if (mutation.target.childElementCount < 6) {
+						await insertFruitTop(mutation.target.children);
+						await insertFruitTop(mutation.target.children);
+					}
+
+					if (mutation.type === "childList") {
+						console.log(observer);
+					}
+				});
 			}
 		}
 	};
@@ -85,9 +84,7 @@ function addFruitHandler() {
 		insertFruitTop(this);
 	});
 }
-function testHandler() {
-	return console.log("this is a test handler");
-}
+
 $(function () {
 	$("button").one("click", function () {
 		gsap.to($(".container-sm"), {
@@ -101,7 +98,7 @@ $(function () {
 		console.log("clicked start");
 		GameStart()
 			.then(removeHandler)
-			.then(addFruitHandler)
+			// .then(addFruitHandler)
 			.then(setUpObservers(12));
 	});
 });
