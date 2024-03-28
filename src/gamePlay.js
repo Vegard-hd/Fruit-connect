@@ -9,7 +9,7 @@ function observeDom(target = 1) {
 		for (const iterator of mutationList[0].target.childNodes) {
 			if (!iterator.getAttribute("click-listener")) {
 				iterator.setAttribute("click-listener", true);
-				iterator.addEventListener("click", async function () {
+				iterator.addEventListener("click", async function clickListener() {
 					await removeFruit(this).then(insertFruitTop(iterator));
 				});
 			}
@@ -27,6 +27,7 @@ function setUpObservers(numberOfObservers) {
 async function removeFruit(target) {
 	$(target).attr("id", "unclickable-element");
 	const remove = () => {
+		$(target).unbind();
 		$(target).off();
 		$(target).remove();
 	};
@@ -120,7 +121,7 @@ $(function () {
 									ease: "back.out(2)",
 								});
 							});
-						element.addEventListener("click", async function () {
+						element.addEventListener("click", async function clickListener() {
 							await removeFruit(this).then(insertFruitTop(element));
 						});
 					}
