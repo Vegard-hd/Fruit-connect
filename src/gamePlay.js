@@ -10,21 +10,13 @@ function observeDom(target = 1) {
 			if (!iterator.getAttribute("click-listener")) {
 				iterator.setAttribute("click-listener", true);
 				iterator.addEventListener("click", async function () {
-					await removeFruit(this)
-						.then(insertFruitTop(iterator))
-						.then(function () {
-							console.log($(iterator).parent());
-						});
+					await removeFruit(this).then(insertFruitTop(iterator));
 				});
 			}
 		}
 	};
 	const observer = new MutationObserver(callback);
-	// Create an observer instance linked to the callback function
-	// Start observing the target node for configured mutations
 	observer.observe(targetNode, config);
-	// Later, you can stop observing
-	// observer.disconnect();
 }
 function setUpObservers(numberOfObservers) {
 	if (numberOfObservers <= 0) return;
@@ -60,19 +52,34 @@ async function insertFruitTop(target) {
 			console.log("Resolved Promise");
 		}, 400);
 	});
+	//Fruits that are created at runtime gets eventlistener
+	$(newFruit)
+		.on("mouseover", function () {
+			gsap.to(this, {
+				duration: 0.5,
+				opacity: 1,
+				scale: 1.4,
+				ease: "back.out(2)",
+			});
+		})
+		.on("mouseleave", function () {
+			gsap.to(this, {
+				duration: 0.5,
+				opacity: 1,
+				scale: 1,
+				ease: "back.out(2)",
+			});
+		});
+
 	function insertFruit() {
 		$(columnSelector).prepend(newFruit);
 	}
 	await myPromise.then(insertFruit);
 }
+
 function removeHandler() {
 	$("img").on("click", function () {
 		removeFruit(this);
-	});
-}
-function addFruitHandler() {
-	$("img").on("click", function () {
-		insertFruitTop(this);
 	});
 }
 
@@ -95,12 +102,25 @@ $(function () {
 					// element == this
 					if (!element.getAttribute("click-listener")) {
 						element.setAttribute("click-listener", true);
-						element.addEventListener("click", async function () {
-							await removeFruit(this)
-								.then(insertFruitTop(element))
-								.then(function () {
-									console.log($(element).parent());
+						$(element)
+							.on("mouseover", function () {
+								gsap.to(this, {
+									duration: 0.5,
+									opacity: 1,
+									scale: 1.4,
+									ease: "back.out(2)",
 								});
+							})
+							.on("mouseleave", function () {
+								gsap.to(this, {
+									duration: 0.5,
+									opacity: 1,
+									scale: 1,
+									ease: "back.out(2)",
+								});
+							});
+						element.addEventListener("click", async function () {
+							await removeFruit(this).then(insertFruitTop(element));
 						});
 					}
 				});
