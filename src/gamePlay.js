@@ -6,23 +6,15 @@ function observeDom(target = 1) {
 	const config = { attributes: false, childList: true, subtree: true };
 	// Callback function to execute when mutations are observed
 	const callback = (mutationList, observer) => {
-		for (const mutation of mutationList) {
-			if (!mutation.target.firstChild.getAttribute("click-listener")) {
-				mutation.target.firstChild.setAttribute("click-listener", true);
-				mutation.target.firstChild.addEventListener("click", async function () {
-					await removeFruit(this).then(
-						insertFruitTop(mutation.target.children)
-					);
-					if (mutation.target.childElementCount > 7)
-						mutation.target.lastChild.remove();
-					else if (mutation.target.childElementCount < 6) {
-						await insertFruitTop(mutation.target.children);
-						await insertFruitTop(mutation.target.children);
-					}
-
-					if (mutation.type === "childList") {
-						console.log(observer);
-					}
+		for (const iterator of mutationList[0].target.childNodes) {
+			if (!iterator.getAttribute("click-listener")) {
+				iterator.setAttribute("click-listener", true);
+				iterator.addEventListener("click", async function () {
+					await removeFruit(this)
+						.then(insertFruitTop(iterator))
+						.then(function () {
+							console.log($(iterator).parent());
+						});
 				});
 			}
 		}
@@ -41,7 +33,6 @@ function setUpObservers(numberOfObservers) {
 }
 
 async function removeFruit(target) {
-	//This fixes current bug but ... it does not work
 	$(target).attr("id", "unclickable-element");
 	const remove = () => {
 		$(target).remove();
@@ -98,7 +89,21 @@ $(function () {
 		console.log("clicked start");
 		GameStart()
 			.then(removeHandler)
-			// .then(addFruitHandler)
-			.then(setUpObservers(12));
+			.then(setUpObservers(12))
+			.then(function () {
+				$("img").each(function (index, element) {
+					// element == this
+					if (!element.getAttribute("click-listener")) {
+						element.setAttribute("click-listener", true);
+						element.addEventListener("click", async function () {
+							await removeFruit(this)
+								.then(insertFruitTop(element))
+								.then(function () {
+									console.log($(element).parent());
+								});
+						});
+					}
+				});
+			});
 	});
 });
