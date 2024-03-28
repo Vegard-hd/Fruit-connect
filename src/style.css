@@ -8,6 +8,7 @@ img {
 	-ms-user-select: none;
 }
 .container-sm {
+	user-select: none;
 	opacity: 0;
 	scale: 0;
 	margin-top: 2rem;
