@@ -1,4 +1,12 @@
 import randomFruit from "./RandomFruit.js";
+function randomFruitID() {
+	let rNum1 = Math.floor(Math.random() * 9);
+	let rNum2 = Math.floor(Math.random() * 9);
+	let rNum3 = Math.floor(Math.random() * 9);
+	let output = `${rNum1}${rNum2}${rNum3}`;
+	return output;
+}
+
 function CreateImg() {
 	const img = document.createElement("img");
 	// Set initial properties (0 opacity and 0 scale)
@@ -14,7 +22,8 @@ function CreateImg() {
 	return $(img)
 		.addClass("col")
 		.attr("src", randomFruit())
-		.attr("alt", "a fruit");
+		.attr("alt", "a fruit")
+		.attr("id", randomFruitID());
 }
 async function GameStart() {
 	function CreateColumn(columnNumber) {
@@ -42,4 +51,4 @@ async function GameStart() {
 		resolve();
 	});
 }
-export { GameStart, CreateImg };
+export { GameStart, CreateImg, randomFruitID };

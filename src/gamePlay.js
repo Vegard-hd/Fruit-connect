@@ -7,16 +7,37 @@ function observeDom(target = 1) {
 	const config = { attributes: false, childList: true, subtree: true };
 	// Callback function to execute when mutations are observed
 	const callback = async (mutationList, observer) => {
+		let prevFruitSRC = null;
+		let nextFruitSRC = null;
+		let thisFruitSRC = null;
 		const currentNodelist = mutationList[0].target.childNodes;
 		async function checkIf3Equal(target) {
 			const myPromise = new Promise((resolve) => {
+				thisFruitSRC = $(target).attr("src");
+				let currentID = $(target).attr("id");
 				let currentImg = $(target).parents();
 				let imgArr = currentImg[0].childNodes;
-				console.log(currentImg);
-				console.log(imgArr);
-				console.log(target);
+				let currenFruitIndex = null;
+				imgArr.forEach((element, index) => {
+					if ($(element).attr("id") === currentID) {
+						currenFruitIndex = index;
+					}
+				});
+				let prevFruitIndex = currenFruitIndex - 1;
+				let nextFrutIndex = currenFruitIndex + 1;
+				imgArr.forEach((element, index) => {
+					if (index === prevFruitIndex) {
+						prevFruitSRC = $(element).attr("src");
+					}
+					if (index === nextFrutIndex) {
+						nextFruitSRC = $(element).attr("src");
+					}
+					resolve();
+				});
 			});
-			await myPromise;
+			await myPromise.then(
+				console.log(prevFruitSRC, thisFruitSRC, nextFruitSRC)
+			);
 		}
 		async function removeThenAddFruits() {
 			for (const iterator of mutationList[0].target.childNodes) {
