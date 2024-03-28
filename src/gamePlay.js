@@ -27,6 +27,7 @@ function setUpObservers(numberOfObservers) {
 async function removeFruit(target) {
 	$(target).attr("id", "unclickable-element");
 	const remove = () => {
+		$(target).off();
 		$(target).remove();
 	};
 	const myPromise = new Promise((resolve) => {
