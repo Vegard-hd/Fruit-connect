@@ -1,19 +1,38 @@
 import { GameStart, CreateImg } from "./GameStart.js";
+var score = null;
 function observeDom(target = 1) {
 	// Select the node that will be observed for mutations
 	const targetNode = document.getElementById(`column-${target}`);
 	// Options for the observer (which mutations to observe)
 	const config = { attributes: false, childList: true, subtree: true };
 	// Callback function to execute when mutations are observed
-	const callback = (mutationList, observer) => {
-		for (const iterator of mutationList[0].target.childNodes) {
-			if (!iterator.getAttribute("click-listener")) {
-				iterator.setAttribute("click-listener", true);
-				iterator.addEventListener("click", async function clickListener() {
-					await removeFruit(this).then(insertFruitTop(iterator));
-				});
+	const callback = async (mutationList, observer) => {
+		const currentNodelist = mutationList[0].target.childNodes;
+		async function checkIf3Equal(target) {
+			const myPromise = new Promise((resolve) => {
+				let currentImg = $(target).parents();
+				let imgArr = currentImg[0].childNodes;
+				console.log(currentImg);
+				console.log(imgArr);
+				console.log(target);
+			});
+			await myPromise;
+		}
+		async function removeThenAddFruits() {
+			for (const iterator of mutationList[0].target.childNodes) {
+				// console.log($(iterator).parents());
+
+				if (!iterator.getAttribute("click-listener")) {
+					iterator.setAttribute("click-listener", true);
+					iterator.addEventListener("click", async function clickListener() {
+						await checkIf3Equal(this)
+							.then(removeFruit(this))
+							.then(insertFruitTop(iterator));
+					});
+				}
 			}
 		}
+		await removeThenAddFruits();
 	};
 	const observer = new MutationObserver(callback);
 	observer.observe(targetNode, config);
@@ -86,6 +105,7 @@ function removeHandler() {
 }
 
 $(function () {
+	$("#score").text(`Score: ${score}`);
 	$("button").one("click", function () {
 		gsap.to($(".container-sm"), {
 			duration: 0.5,
