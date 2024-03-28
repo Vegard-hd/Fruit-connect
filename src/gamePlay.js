@@ -10,7 +10,7 @@ function observeDom(target = 1) {
 		let prevFruitSRC = null;
 		let nextFruitSRC = null;
 		let thisFruitSRC = null;
-		const currentNodelist = mutationList[0].target.childNodes;
+		let nextColumnFruitSRC = null;
 		async function checkIf3Equal(target) {
 			const myPromise = new Promise((resolve) => {
 				thisFruitSRC = $(target).attr("src");
@@ -18,6 +18,8 @@ function observeDom(target = 1) {
 				let currentImg = $(target).parents();
 				let imgArr = currentImg[0].childNodes;
 				let currenFruitIndex = null;
+				let nextColumn = currentImg[0].nextElementSibling;
+				let previusColum = currentImg[0].previousElementSibling;
 				imgArr.forEach((element, index) => {
 					if ($(element).attr("id") === currentID) {
 						currenFruitIndex = index;
@@ -33,6 +35,16 @@ function observeDom(target = 1) {
 						nextFruitSRC = $(element).attr("src");
 					}
 					resolve();
+				});
+				previusColum.forEach((element, index) => {
+					if (index === currenFruitIndex) {
+						nextColumnFruitSRC = $(element).attr("src");
+					}
+				});
+				nextColumn.forEach((element, index) => {
+					if (index === currenFruitIndex) {
+						nextColumnFruitSRC = $(element).attr("src");
+					}
 				});
 			});
 			await myPromise.then(
