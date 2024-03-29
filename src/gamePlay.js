@@ -10,6 +10,8 @@ async function checkIf3Equal(target) {
 	let thisFruitSRC = null;
 	let nextColumnFruitSRC = null;
 	let previusColumnFruitSRC = null;
+	let previusColum;
+	let nextColumn;
 	async function executer(target) {
 		const myPromise = new Promise((resolve) => {
 			thisFruitSRC = $(target).attr("src");
@@ -17,8 +19,12 @@ async function checkIf3Equal(target) {
 			let currentImg = $(target).parents();
 			let imgArr = currentImg[0].childNodes;
 			let currenFruitIndex = null;
-			let nextColumn = currentImg[0].nextElementSibling.childNodes;
-			let previusColum = currentImg[0].previousElementSibling.childNodes;
+			try {
+				nextColumn = currentImg[0].nextElementSibling.childNodes;
+				previusColum = currentImg[0].previousElementSibling.childNodes;
+			} catch (error) {
+				console.log(error);
+			}
 			imgArr.forEach((element, index) => {
 				if ($(element).attr("id") === currentID) {
 					currenFruitIndex = index;
