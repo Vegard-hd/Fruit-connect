@@ -3,6 +3,67 @@ import {
 	checkForEqualFruits,
 	checkForEqualFruitColumns,
 } from "./fruitValidator.js";
+
+async function checkIf3Equal(target) {
+	let prevFruitSRC = null;
+	let nextFruitSRC = null;
+	let thisFruitSRC = null;
+	let nextColumnFruitSRC = null;
+	let previusColumnFruitSRC = null;
+	async function executer(target) {
+		const myPromise = new Promise((resolve) => {
+			thisFruitSRC = $(target).attr("src");
+			let currentID = $(target).attr("id");
+			let currentImg = $(target).parents();
+			let imgArr = currentImg[0].childNodes;
+			let currenFruitIndex = null;
+			let nextColumn = currentImg[0].nextElementSibling.childNodes;
+			let previusColum = currentImg[0].previousElementSibling.childNodes;
+			imgArr.forEach((element, index) => {
+				if ($(element).attr("id") === currentID) {
+					currenFruitIndex = index;
+				}
+			});
+			let prevFruitIndex = currenFruitIndex - 1;
+			let nextFrutIndex = currenFruitIndex + 1;
+			imgArr.forEach((element, index) => {
+				if (index === prevFruitIndex) {
+					prevFruitSRC = $(element).attr("src");
+				}
+				if (index === nextFrutIndex) {
+					nextFruitSRC = $(element).attr("src");
+				}
+			});
+			if (previusColum >= 1) {
+				previusColum.forEach((element, index) => {
+					if (index === currenFruitIndex) {
+						previusColumnFruitSRC = $(element).attr("src");
+					}
+				});
+			}
+			if (!(nextColumn === null)) {
+				nextColumn.forEach((element, index) => {
+					if (index === currenFruitIndex) {
+						nextColumnFruitSRC = $(element).attr("src");
+					}
+				});
+			}
+			resolve();
+		});
+		console.log(prevFruitSRC, thisFruitSRC, nextFruitSRC);
+		await myPromise
+			.then(checkForEqualFruits(prevFruitSRC, thisFruitSRC, nextFruitSRC))
+			.then(
+				checkForEqualFruitColumns(
+					previusColumnFruitSRC,
+					thisFruitSRC,
+					nextColumnFruitSRC
+				)
+			);
+	}
+	await executer(target);
+}
+
 function observeDom(target = 1) {
 	// Select the node that will be observed for mutations
 	const targetNode = document.getElementById(`column-${target}`);
@@ -10,62 +71,6 @@ function observeDom(target = 1) {
 	const config = { attributes: false, childList: true, subtree: true };
 	// Callback function to execute when mutations are observed
 	const callback = async (mutationList, observer) => {
-		let prevFruitSRC = null;
-		let nextFruitSRC = null;
-		let thisFruitSRC = null;
-		let nextColumnFruitSRC = null;
-		let previusColumnFruitSRC = null;
-		async function checkIf3Equal(target) {
-			const myPromise = new Promise((resolve) => {
-				thisFruitSRC = $(target).attr("src");
-				let currentID = $(target).attr("id");
-				let currentImg = $(target).parents();
-				let imgArr = currentImg[0].childNodes;
-				let currenFruitIndex = null;
-				let nextColumn = currentImg[0].nextElementSibling.childNodes;
-				let previusColum = currentImg[0].previousElementSibling.childNodes;
-				imgArr.forEach((element, index) => {
-					if ($(element).attr("id") === currentID) {
-						currenFruitIndex = index;
-					}
-				});
-				let prevFruitIndex = currenFruitIndex - 1;
-				let nextFrutIndex = currenFruitIndex + 1;
-				imgArr.forEach((element, index) => {
-					if (index === prevFruitIndex) {
-						prevFruitSRC = $(element).attr("src");
-					}
-					if (index === nextFrutIndex) {
-						nextFruitSRC = $(element).attr("src");
-					}
-				});
-				if (previusColum >= 1) {
-					previusColum.forEach((element, index) => {
-						if (index === currenFruitIndex) {
-							previusColumnFruitSRC = $(element).attr("src");
-						}
-					});
-				}
-				if (!(nextColumn === null)) {
-					nextColumn.forEach((element, index) => {
-						if (index === currenFruitIndex) {
-							nextColumnFruitSRC = $(element).attr("src");
-						}
-					});
-				}
-				resolve();
-			});
-			console.log(prevFruitSRC, thisFruitSRC, nextFruitSRC);
-			await myPromise
-				.then(checkForEqualFruits(prevFruitSRC, thisFruitSRC, nextFruitSRC))
-				.then(
-					checkForEqualFruitColumns(
-						previusColumnFruitSRC,
-						thisFruitSRC,
-						nextColumnFruitSRC
-					)
-				);
-		}
 		async function removeThenAddFruits() {
 			for (const iterator of mutationList[0].target.childNodes) {
 				// console.log($(iterator).parents());
@@ -189,7 +194,9 @@ $(function () {
 								});
 							});
 						element.addEventListener("click", async function clickListener() {
-							await removeFruit(this).then(insertFruitTop(element));
+							await checkIf3Equal(element)
+								.then(removeFruit(this))
+								.then(insertFruitTop(element));
 						});
 					}
 				});
