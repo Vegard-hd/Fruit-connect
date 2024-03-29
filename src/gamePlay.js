@@ -1,5 +1,8 @@
 import { GameStart, CreateImg } from "./GameStart.js";
-var score = null;
+import {
+	checkForEqualFruits,
+	checkForEqualFruitColumns,
+} from "./fruitValidator.js";
 function observeDom(target = 1) {
 	// Select the node that will be observed for mutations
 	const targetNode = document.getElementById(`column-${target}`);
@@ -11,6 +14,7 @@ function observeDom(target = 1) {
 		let nextFruitSRC = null;
 		let thisFruitSRC = null;
 		let nextColumnFruitSRC = null;
+		let previusColumnFruitSRC = null;
 		async function checkIf3Equal(target) {
 			const myPromise = new Promise((resolve) => {
 				thisFruitSRC = $(target).attr("src");
@@ -18,8 +22,8 @@ function observeDom(target = 1) {
 				let currentImg = $(target).parents();
 				let imgArr = currentImg[0].childNodes;
 				let currenFruitIndex = null;
-				let nextColumn = currentImg[0].nextElementSibling;
-				let previusColum = currentImg[0].previousElementSibling;
+				let nextColumn = currentImg[0].nextElementSibling.childNodes;
+				let previusColum = currentImg[0].previousElementSibling.childNodes;
 				imgArr.forEach((element, index) => {
 					if ($(element).attr("id") === currentID) {
 						currenFruitIndex = index;
@@ -34,22 +38,33 @@ function observeDom(target = 1) {
 					if (index === nextFrutIndex) {
 						nextFruitSRC = $(element).attr("src");
 					}
-					resolve();
 				});
-				previusColum.forEach((element, index) => {
-					if (index === currenFruitIndex) {
-						nextColumnFruitSRC = $(element).attr("src");
-					}
-				});
-				nextColumn.forEach((element, index) => {
-					if (index === currenFruitIndex) {
-						nextColumnFruitSRC = $(element).attr("src");
-					}
-				});
+				if (previusColum >= 1) {
+					previusColum.forEach((element, index) => {
+						if (index === currenFruitIndex) {
+							previusColumnFruitSRC = $(element).attr("src");
+						}
+					});
+				}
+				if (!(nextColumn === null)) {
+					nextColumn.forEach((element, index) => {
+						if (index === currenFruitIndex) {
+							nextColumnFruitSRC = $(element).attr("src");
+						}
+					});
+				}
+				resolve();
 			});
-			await myPromise.then(
-				console.log(prevFruitSRC, thisFruitSRC, nextFruitSRC)
-			);
+			console.log(prevFruitSRC, thisFruitSRC, nextFruitSRC);
+			await myPromise
+				.then(checkForEqualFruits(prevFruitSRC, thisFruitSRC, nextFruitSRC))
+				.then(
+					checkForEqualFruitColumns(
+						previusColumnFruitSRC,
+						thisFruitSRC,
+						nextColumnFruitSRC
+					)
+				);
 		}
 		async function removeThenAddFruits() {
 			for (const iterator of mutationList[0].target.childNodes) {
@@ -138,7 +153,6 @@ function removeHandler() {
 }
 
 $(function () {
-	$("#score").text(`Score: ${score}`);
 	$("button").one("click", function () {
 		gsap.to($(".container-sm"), {
 			duration: 0.5,
