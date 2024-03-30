@@ -40,7 +40,7 @@ async function checkIf3Equal(target) {
 					nextFruitSRC = $(element).attr("src");
 				}
 			});
-			if (previusColum >= 1) {
+			if (!(previusColum === null)) {
 				previusColum.forEach((element, index) => {
 					if (index === currenFruitIndex) {
 						previusColumnFruitSRC = $(element).attr("src");
