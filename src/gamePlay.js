@@ -12,6 +12,8 @@ async function checkIf3Equal(target) {
 	let previusColumnFruitSRC = null;
 	let previusColum;
 	let nextColumn;
+	let previusColumnClickTarget;
+	let nextColumnClickTarget;
 	async function executer(target) {
 		const myPromise = new Promise((resolve) => {
 			thisFruitSRC = $(target).attr("src");
@@ -43,6 +45,7 @@ async function checkIf3Equal(target) {
 			if (!(previusColum === null)) {
 				previusColum.forEach((element, index) => {
 					if (index === currenFruitIndex) {
+						previusColumnClickTarget = $(element);
 						previusColumnFruitSRC = $(element).attr("src");
 					}
 				});
@@ -50,6 +53,7 @@ async function checkIf3Equal(target) {
 			if (!(nextColumn === null)) {
 				nextColumn.forEach((element, index) => {
 					if (index === currenFruitIndex) {
+						nextColumnClickTarget = $(element);
 						nextColumnFruitSRC = $(element).attr("src");
 					}
 				});
@@ -65,6 +69,13 @@ async function checkIf3Equal(target) {
 					thisFruitSRC,
 					nextColumnFruitSRC
 				)
+					? async () => {
+							await removeFruit(previusColumnClickTarget);
+							await removeFruit(nextColumnClickTarget);
+							await insertFruitTop(previusColumnClickTarget);
+							await insertFruitTop(nextColumnClickTarget);
+					  }
+					: console.log("nothing")
 			);
 	}
 	await executer(target);
@@ -80,7 +91,7 @@ function observeDom(target = 1) {
 		async function removeThenAddFruits() {
 			for (const iterator of mutationList[0].target.childNodes) {
 				// console.log($(iterator).parents());
-
+				console.log(mutationList[0].target.childNodes.length);
 				if (!iterator.getAttribute("click-listener")) {
 					iterator.setAttribute("click-listener", true);
 					iterator.addEventListener("click", async function clickListener() {
@@ -112,11 +123,12 @@ async function removeFruit(target) {
 	const myPromise = new Promise((resolve) => {
 		setTimeout(() => {
 			resolve();
-		}, 200);
+		}, 100);
 	});
 	await myPromise.then(remove);
 }
 async function insertFruitTop(target) {
+	let columnFruitCount = $(target).parents();
 	const thisClass = $(target).attr("class");
 	const thisColumnNumber = () => {
 		if (thisClass.length === 16) return thisClass.at(-1);
@@ -130,7 +142,7 @@ async function insertFruitTop(target) {
 		setTimeout(() => {
 			resolve();
 			console.log("Resolved Promise");
-		}, 400);
+		}, 100);
 	});
 	//Fruits that are created at runtime gets eventlistener
 	$(newFruit)

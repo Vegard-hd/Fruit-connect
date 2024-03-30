@@ -18,7 +18,9 @@ function checkForEqualFruitColumns(
 	nextColumnFruit
 ) {
 	console.log(previusColumnFruit, currentFruit, nextColumnFruit);
-	if (previusColumnFruit === currentFruit && nextColumnFruit === currentFruit)
+	if (previusColumnFruit === currentFruit && nextColumnFruit === currentFruit) {
 		updateScore(100);
+		return true;
+	}
 }
 export { checkForEqualFruits, checkForEqualFruitColumns };
