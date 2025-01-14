@@ -8,28 +8,30 @@ function reviver(key, value) {
   return value;
 }
 
-// convert back to JS obj
-// console.log(backToObj);
-$.get("/fruitgrid/all", function (data) {
-  console.log(data);
-});
-
 $.get("/fruitgrid", function (data) {
   // $(".result").html(data);
   const backToObj = JSON.parse(data, reviver);
   // alert("Load was performed.");
   let count = 0;
   let rowCount = 0;
+  const iterator1 = backToObj.keys();
   backToObj.forEach((element) => {
+    let key = iterator1.next().value;
     count++;
     if (count > 12) {
       count = 0;
       rowCount += 1;
     }
-    console.log(count, rowCount);
+    console.log(count, rowCount, key);
     $(`#row${count}`).append(
-      `<img src="${element.src}" alt="${element.fruit}" />`
+      `<img id="${key}" src="${element.src}" alt="${element.fruit}" />`
     );
   });
   console.log(backToObj);
+});
+
+$(function () {
+  $(document).on("click", function (e) {
+    console.log($(e.target).parent());
+  });
 });

@@ -1,5 +1,5 @@
 img {
-	z-index: 99;
+	z-index: 90;
 	-webkit-user-drag: none;
 	user-select: none;
 	-moz-user-select: none;
@@ -15,6 +15,7 @@ img {
 	grid-template-columns: repeat(12, [col-start] 1fr);
 	padding-top: 10px;
 	/* gap: 20px; */
+	z-index: 99;
 }
 /* .fruitBox {
 	flex-direction: column-reverse;

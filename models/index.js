@@ -2,6 +2,7 @@ const Sequelize = require("sequelize");
 const fs = require("fs");
 const path = require("path");
 const basename = path.basename(__filename);
+const SqliteDialect = require("@sequelize/sqlite3");
 require("dotenv").config();
 const connection = {
   database: process.env.DATABASE_NAME,
@@ -9,6 +10,7 @@ const connection = {
   password: process.env.ADMIN_PASSWORD,
   host: process.env.HOST,
   dialect: process.env.DIALECT,
+  storage: "sequelize.sqlite",
   dialectmodel: process.env.DIALECTMODEL,
 };
 // @ts-ignore

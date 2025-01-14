@@ -2,13 +2,13 @@ const fruitGrid = require("../functions/fruitGrid");
 
 /* GET home page. */
 var newFruitGrid = new fruitGrid();
-
 class FruitService {
   constructor(db) {
     this.client = db.sequelize;
     this.fruit = db.fruit;
   }
-  async create(fruit) {
+  async create() {
+    newFruitGrid.initGrid();
     return await this.fruit.create({
       fruitgrid: newFruitGrid.stringifyFruits(),
     });
