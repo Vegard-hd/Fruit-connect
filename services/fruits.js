@@ -13,6 +13,20 @@ class FruitService {
       fruitgrid: newFruitGrid.stringifyFruits(),
     });
   }
+
+  async update(fruitGrid) {
+    return await this.fruit.update(
+      {
+        fruitgrid: fruitGrid,
+      },
+      {
+        where: {
+          id: 1,
+        },
+      }
+    );
+  }
+
   async getAll() {
     return await this.fruit.findAll({ where: {} });
   }
