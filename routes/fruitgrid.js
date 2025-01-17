@@ -64,7 +64,7 @@ router.post("/", async (req, res, next) => {
     let score = calculateEqualFruits(
       gameFruitArr,
       clickedIndex,
-      rowEnd,
+      rowIndex,
       rowStart,
       rowEnd
     );
