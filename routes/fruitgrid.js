@@ -4,6 +4,12 @@ const db = require("../models/index");
 const fruitService = require("../services/fruits");
 const FruitService = new fruitService(db);
 const randomFruit = require("../functions/randomFruit");
+const {
+  threeEqual,
+  fourEqual,
+  fiveEqual,
+  calculateEqualFruits,
+} = require("../functions/checkEqualFruits");
 
 router.post("/", async (req, res, next) => {
   try {
@@ -33,6 +39,10 @@ router.post("/", async (req, res, next) => {
     const rowStart = rowIndex * fruitsPerRow; // start index in the array for this row
     const rowEnd = rowStart + fruitsPerRow - 1; // end index in the array for this row
 
+    console.log(
+      `rowstart: ${rowStart}, rowend: ${rowEnd}, rowindex: ${rowIndex}`
+    );
+
     // 4) Option A: locate the clicked fruit by ID if needed
     const clickedIndex = gameFruitArr.findIndex(
       (element) => element?.i?.id === mappedBody.fruitId
@@ -51,33 +61,15 @@ router.post("/", async (req, res, next) => {
     //    toward the top, and you insert a new fruit at the *bottom*.
     //
     //    This loop copies the element just above i down into position i.
-    let score = 0;
-    incrementScore();
-    function incrementScore() {
-      if (
-        gameFruitArr[clickedIndex + 2].i.fruit ===
-          gameFruitArr[clickedIndex].i.fruit &&
-        gameFruitArr[clickedIndex - 2].i.fruit ===
-          gameFruitArr[clickedIndex].i.fruit
-      ) {
-        score += 3;
-      } else if (
-        gameFruitArr[clickedIndex + 2].i.fruit ===
-          gameFruitArr[clickedIndex].i.fruit ||
-        gameFruitArr[clickedIndex - 2].i.fruit ===
-          gameFruitArr[clickedIndex].i.fruit
-      ) {
-        score += 2;
-      } else if (
-        gameFruitArr[clickedIndex + 1].i.fruit ===
-          gameFruitArr[clickedIndex].i.fruit &&
-        gameFruitArr[clickedIndex - 1].i.fruit ===
-          gameFruitArr[clickedIndex].i.fruit
-      ) {
-        score += 1;
-      }
-    }
+    let score = calculateEqualFruits(
+      gameFruitArr,
+      clickedIndex,
+      rowEnd,
+      rowStart,
+      rowEnd
+    );
     console.log("score is .... ", score);
+
     for (let i = clickedIndex; i > rowStart; i--) {
       gameFruitArr[i] = gameFruitArr[i - 1];
     }
