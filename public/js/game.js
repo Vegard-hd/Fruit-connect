@@ -56,6 +56,7 @@ $(function () {
       $.post("/fruitgrid", { fruitData: output }).done(function (data) {
         // $(`#row${Number.parseInt(clickedRow, 10)}`).empty();
         // updateGrid();
+        location.reload();
       });
     }
   });

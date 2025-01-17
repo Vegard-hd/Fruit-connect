@@ -51,6 +51,33 @@ router.post("/", async (req, res, next) => {
     //    toward the top, and you insert a new fruit at the *bottom*.
     //
     //    This loop copies the element just above i down into position i.
+    let score = 0;
+    incrementScore();
+    function incrementScore() {
+      if (
+        gameFruitArr[clickedIndex + 2].i.fruit ===
+          gameFruitArr[clickedIndex].i.fruit &&
+        gameFruitArr[clickedIndex - 2].i.fruit ===
+          gameFruitArr[clickedIndex].i.fruit
+      ) {
+        score += 3;
+      } else if (
+        gameFruitArr[clickedIndex + 2].i.fruit ===
+          gameFruitArr[clickedIndex].i.fruit ||
+        gameFruitArr[clickedIndex - 2].i.fruit ===
+          gameFruitArr[clickedIndex].i.fruit
+      ) {
+        score += 2;
+      } else if (
+        gameFruitArr[clickedIndex + 1].i.fruit ===
+          gameFruitArr[clickedIndex].i.fruit &&
+        gameFruitArr[clickedIndex - 1].i.fruit ===
+          gameFruitArr[clickedIndex].i.fruit
+      ) {
+        score += 1;
+      }
+    }
+    console.log("score is .... ", score);
     for (let i = clickedIndex; i > rowStart; i--) {
       gameFruitArr[i] = gameFruitArr[i - 1];
     }
