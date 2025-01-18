@@ -4,12 +4,7 @@ const db = require("../models/index");
 const fruitService = require("../services/fruits");
 const FruitService = new fruitService(db);
 const randomFruit = require("../functions/randomFruit");
-const {
-  threeEqual,
-  fourEqual,
-  fiveEqual,
-  calculateEqualFruits,
-} = require("../functions/checkEqualFruits");
+const { calculateEqualFruits } = require("../functions/checkEqualFruits");
 
 router.post("/", async (req, res, next) => {
   try {
@@ -33,12 +28,14 @@ router.post("/", async (req, res, next) => {
       yAxis: Number.parseInt(convertedInput.yAxis, 10), // e.g. 0..9
     };
 
+    //Set to store IDs of deleted fruit
+    const deletedFruitIds = new Set();
+
     // 3) Calculate row/column indices (if you store rows contiguously in a 1D array)
     const fruitsPerRow = 10; // number of vertical fruits per row
     const rowIndex = mappedBody.clickedRow - 1; // zero-based row index
     const rowStart = rowIndex * fruitsPerRow; // start index in the array for this row
     const rowEnd = rowStart + fruitsPerRow - 1; // end index in the array for this row
-
     console.log(
       `rowstart: ${rowStart}, rowend: ${rowEnd}, rowindex: ${rowIndex}`
     );
@@ -52,6 +49,15 @@ router.post("/", async (req, res, next) => {
     if (clickedIndex === -1) {
       return res.status(400).json({ message: "Fruit not found" }).end();
     }
+
+    //handle extra check to match backend fruit type with userinput
+    const clickedFruitBackend = gameFruitArr[clickedIndex].i.fruit;
+    const clickedFruitId = gameFruitArr[clickedIndex].i.id;
+    if (clickedFruitId !== mappedBody.fruitId) {
+      throw new Error("id user provided is not correct");
+    }
+
+    deletedFruitIds.add(clickedFruitId);
 
     // 5) Invert the shifting direction
     //    Example: If you want to remove the clicked fruit and shift everything
@@ -68,8 +74,10 @@ router.post("/", async (req, res, next) => {
       rowStart,
       rowEnd
     );
-    console.log("score is .... ", score);
-
+    console.log("Score is ", score);
+    if (score && score.size !== 0) {
+      score.forEach((element) => deletedFruitIds.add(element));
+    }
     for (let i = clickedIndex; i > rowStart; i--) {
       gameFruitArr[i] = gameFruitArr[i - 1];
     }
@@ -83,10 +91,12 @@ router.post("/", async (req, res, next) => {
     //      gameFruitArr[rowEnd] = { i: randomFruit() };
 
     // 7) Save updated array back to DB
+    console.log(deletedFruitIds);
+
     const jsonFruitGrid = JSON.stringify(gameFruitArr);
     await FruitService.update(jsonFruitGrid);
 
-    return res.status(201).json(JSON.stringify(rFruit)).end();
+    return res.status(201).json(jsonFruitGrid);
   } catch (error) {
     console.error(error);
     return res.status(500).end();

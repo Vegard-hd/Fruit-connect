@@ -1,35 +1,40 @@
 // REF: https://stackoverflow.com/questions/29085197/how-do-you-json-stringify-an-es6-map
 
 $(function () {
-  updateGrid();
-  async function updateGrid() {
-    return await $.get("/fruitgrid", function (data) {
-      try {
-        const backToObj = JSON.parse(data);
-        console.log(backToObj);
-        let count = 0;
-        let rowCount = 1;
-        backToObj.forEach((element, index) => {
-          let fruit = element.i.fruit;
-          let src = element.i.src;
-          let id = element.i.id;
-          count++;
-          $(`#row${rowCount}`).append(
-            `<img id="${id}" src="${src}" alt="${fruit}" />`
-          );
-          if (count >= 10) {
-            count = 0;
-            rowCount++;
-          }
-          console.log(count, rowCount, fruit, src, id);
-        });
-        console.log(backToObj);
-      } catch (error) {
-        console.error(error);
-        console.warn("something went wrong with getting the fruit data");
+  function updateGrid(data, init = false) {
+    try {
+      if (init === true) {
+        for (let i = 1; i <= 12; i++) {
+          $(`#row${i}`).empty();
+        }
+        // clear fruits;
       }
-    });
+      const backToObj = JSON.parse(data);
+      console.log(backToObj);
+      let count = 0;
+      let rowCount = 1;
+      backToObj.forEach((element, index) => {
+        let fruit = element.i.fruit;
+        let src = element.i.src;
+        let id = element.i.id;
+        count++;
+        $(`#row${rowCount}`).append(
+          `<img id="${id}" src="${src}" alt="${fruit}" />`
+        );
+        if (count >= 10) {
+          count = 0;
+          rowCount++;
+        }
+        // console.log(count, rowCount, fruit, src, id);
+      });
+      // console.log(backToObj);
+    } catch (error) {
+      console.error(error);
+    }
   }
+  $.get("/fruitgrid", function (data) {
+    updateGrid(data, false);
+  });
 
   $(document).on("click", function (e) {
     if (e.target.tagName === "IMG") {
@@ -54,9 +59,7 @@ $(function () {
       };
       output = JSON.stringify(output);
       $.post("/fruitgrid", { fruitData: output }).done(function (data) {
-        // $(`#row${Number.parseInt(clickedRow, 10)}`).empty();
-        // updateGrid();
-        location.reload();
+        updateGrid(data, true);
       });
     }
   });
