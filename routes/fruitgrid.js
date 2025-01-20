@@ -28,9 +28,6 @@ router.post("/", async (req, res, next) => {
       yAxis: Number.parseInt(convertedInput.yAxis, 10), // e.g. 0..9
     };
 
-    //Set to store IDs of deleted fruit
-    const deletedFruitIds = new Set();
-
     // 3) Calculate row/column indices (if you store rows contiguously in a 1D array)
     const fruitsPerRow = 10; // number of vertical fruits per row
     const rowIndex = mappedBody.clickedRow - 1; // zero-based row index
@@ -57,8 +54,6 @@ router.post("/", async (req, res, next) => {
       throw new Error("id user provided is not correct");
     }
 
-    deletedFruitIds.add(clickedFruitId);
-
     // 5) Invert the shifting direction
     //    Example: If you want to remove the clicked fruit and shift everything
     //    *above* it “up”, you loop from clickedIndex upward.
@@ -67,17 +62,44 @@ router.post("/", async (req, res, next) => {
     //    toward the top, and you insert a new fruit at the *bottom*.
     //
     //    This loop copies the element just above i down into position i.
-    let score = calculateEqualFruits(
-      gameFruitArr,
-      clickedIndex,
-      rowIndex,
-      rowStart,
-      rowEnd
-    );
-    console.log("Score is ", score);
-    if (score && score.size !== 0) {
-      score.forEach((element) => deletedFruitIds.add(element));
+
+    const arrOfSets = new Array();
+
+    for (let i = clickedIndex - 1; i >= rowStart; i--) {
+      console.log("i in loop is .... ", i);
+      console.log("fruit in loop is .... ", gameFruitArr[i].i.fruit);
+      if (gameFruitArr[i].i.fruit === clickedFruitBackend) {
+        arrOfSets.push(
+          calculateEqualFruits(gameFruitArr, i, rowIndex, rowStart, rowEnd)
+        );
+      } else {
+        break;
+      }
     }
+
+    for (let i = clickedIndex + 1; i <= rowEnd; i++) {
+      console.log("i in loop is .... ", i);
+      console.log("fruit in loop is .... ", gameFruitArr[i].i.fruit);
+      if (gameFruitArr[i].i.fruit === clickedFruitBackend) {
+        arrOfSets.push(
+          calculateEqualFruits(gameFruitArr, i, rowIndex, rowStart, rowEnd)
+        );
+      } else {
+        break;
+      }
+    }
+
+    arrOfSets.push(
+      calculateEqualFruits(
+        gameFruitArr,
+        clickedIndex,
+        rowIndex,
+        rowStart,
+        rowEnd
+      )
+    );
+    console.log("Score is ", arrOfSets);
+
     for (let i = clickedIndex; i > rowStart; i--) {
       gameFruitArr[i] = gameFruitArr[i - 1];
     }
@@ -91,7 +113,7 @@ router.post("/", async (req, res, next) => {
     //      gameFruitArr[rowEnd] = { i: randomFruit() };
 
     // 7) Save updated array back to DB
-    console.log(deletedFruitIds);
+    // console.log(deletedFruitIds);
 
     const jsonFruitGrid = JSON.stringify(gameFruitArr);
     await FruitService.update(jsonFruitGrid);
