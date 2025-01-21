@@ -4,7 +4,10 @@ const db = require("../models/index");
 const fruitService = require("../services/fruits");
 const FruitService = new fruitService(db);
 const randomFruit = require("../functions/randomFruit");
-const { calculateEqualFruits } = require("../functions/checkEqualFruits");
+const {
+  calculateEqualFruits,
+  calculateRow,
+} = require("../functions/checkEqualFruits");
 
 router.post("/", async (req, res, next) => {
   try {
@@ -21,7 +24,7 @@ router.post("/", async (req, res, next) => {
 
     // 2) Parse user input
     const clickedFruit = req.body.fruitData;
-    const convertedInput = JSON.parse(clickedFruit);
+    const convertedInput = await JSON.parse(clickedFruit);
     const mappedBody = {
       clickedRow: Number.parseInt(convertedInput.clickedRow, 10), // e.g. 1..12
       fruitId: convertedInput.fruitId, // e.g. 'OWUVRL'
@@ -98,15 +101,51 @@ router.post("/", async (req, res, next) => {
         rowEnd
       )
     );
-    console.log("Score is ", arrOfSets);
 
-    for (let i = clickedIndex; i > rowStart; i--) {
-      gameFruitArr[i] = gameFruitArr[i - 1];
+    const deletedIndexes = new Array();
+
+    function getIndex(fruitid = "ABDCDA") {
+      return gameFruitArr.findIndex((element) => element?.i?.id === fruitid);
     }
-    const rFruit = randomFruit();
+
+    arrOfSets.forEach((element) => {
+      if (element.size) {
+        element.forEach((ele2) => deletedIndexes.push(getIndex(ele2)));
+      } else deletedIndexes.push(getIndex(element));
+    });
+    // console.log("Score is ", arrOfSets);
+    const mappedIndexes = deletedIndexes.map((element) => {
+      return {
+        index: element,
+        row: calculateRow(element),
+      };
+    });
+    const sortedMappedIndexes = mappedIndexes.sort((a, b) => b.index - a.index);
+    console.dir(sortedMappedIndexes);
+    // todo : find index of each fruit in completedSet + row
+    // remove fruits by their ID
+    // add new fruits at the top of
+
+    for (let i = sortedMappedIndexes.length - 1; i >= 0; i--) {
+      const element = sortedMappedIndexes[i];
+      // TODO: shift fruits in each row once to prevent unaligned array
+      gameFruitArr.splice(element.index, 1);
+      let thisRow = element.row * 10;
+      gameFruitArr.splice(thisRow, 0, { i: randomFruit() });
+    }
+
+    // for (let i = 0; i < sortedMappedIndexes.length; i++) {
+    //   const element = sortedMappedIndexes[i];
+    //   //TODO: shift fruits in each row once to prevent unaligned array
+    //   gameFruitArr.splice(element.index, 1);
+    // }
+
+    // let rowStart = element.row * 10;
+    // for (let i = clickedIndex; i > rowStart; i--) {
+    //   gameFruitArr[i] = gameFruitArr[i - 1];
+    // }
     // 6) Insert new fruit at the top or bottom as needed:
     //    - If you want the new fruit at the *bottom* after shifting, do:
-    gameFruitArr[rowStart] = { i: rFruit };
 
     //    - Alternatively, if you want the new fruit at the *top* after shifting, invert the logic:
     //      for (let i = clickedIndex; i < rowEnd; i++) { ... }

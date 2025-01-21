@@ -31,7 +31,7 @@ server.on("listening", onListening);
 
 //db sync
 var db = require("../models");
-db.sequelize.sync({ force: false });
+db.sequelize.sync({ force: true });
 
 /**
  * Normalize a port into a number, string, or false.
