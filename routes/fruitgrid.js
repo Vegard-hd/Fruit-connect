@@ -38,13 +38,13 @@ router.post("/", async (req, res, next) => {
 
     //handle extra check to match backend fruit type with userinput
 
-    const connectedIndices = findConnectedFruits(
+    const connectedIndices = await findConnectedFruits(
       gameFruitArr,
       clickedIndex,
       10,
       12
     );
-    const finishedArr = removeAndShiftFruits(
+    const finishedArr = await removeAndShiftFruits(
       gameFruitArr,
       connectedIndices,
       randomFruit
