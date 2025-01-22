@@ -5,7 +5,9 @@ const fruitService = require("../services/fruits");
 const FruitService = new fruitService(db);
 const randomFruit = require("../functions/randomFruit");
 const {
+  removeAndShiftFruits,
   fruitLogic,
+  findConnectedFruits,
   calculateEqualFruits,
   calculateRow,
 } = require("../functions/checkEqualFruits");
@@ -20,15 +22,11 @@ router.post("/", async (req, res, next) => {
     }
     const dataBuffer = Buffer.from(data?.[0]?.fruitgrid ?? data.fruitgrid);
     const bufferToString = dataBuffer.toString("utf-8");
-    // gameFruitArr is a 1D array holding all rows consecutively
     const gameFruitArr = JSON.parse(bufferToString);
 
-    // 2) Parse user input
     const clickedFruit = req.body.fruit;
-    const convertedInput = await JSON.parse(clickedFruit);
     const clickedId = await JSON.parse(clickedFruit);
 
-    // 4) Option A: locate the clicked fruit by ID if needed
     const clickedIndex = gameFruitArr.findIndex(
       (element) => element?.i?.id === clickedId
     );
@@ -39,18 +37,24 @@ router.post("/", async (req, res, next) => {
     }
 
     //handle extra check to match backend fruit type with userinput
-    const clickedFruitBackend = gameFruitArr[clickedIndex].i.fruit;
-    const clickedFruitId = gameFruitArr[clickedIndex].i.id;
-    if (clickedFruitId !== clickedId) {
-      throw new Error("id user provided is not correct");
-    }
-    const output = fruitLogic(gameFruitArr, clickedIndex);
-    const jsonFruitGrid = JSON.stringify(output);
+
+    const connectedIndices = findConnectedFruits(
+      gameFruitArr,
+      clickedIndex,
+      10,
+      12
+    );
+    const finishedArr = removeAndShiftFruits(
+      gameFruitArr,
+      connectedIndices,
+      randomFruit
+    );
+    const jsonFruitGrid = JSON.stringify(finishedArr);
     await FruitService.update(jsonFruitGrid);
 
     return res.status(201).json(jsonFruitGrid);
   } catch (error) {
-    console.error(error);
+    console.warn(error);
     return res.status(500).end();
   }
 });
