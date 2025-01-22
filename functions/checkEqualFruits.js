@@ -44,7 +44,6 @@ module.exports = {
           { r: row, c: col - 1 }, // left
           { r: row, c: col + 1 }, // right
         ];
-        console.dir(neighbors);
         for (const { r, c } of neighbors) {
           if (inBounds(r, c)) {
             const neighborIndex = toIndex(r, c);
@@ -183,7 +182,6 @@ module.exports = {
 
     function replaceFruit(index, row) {}
 
-    console.table(arrOfIds);
     function calculateRow(index) {
       let check;
       try {
