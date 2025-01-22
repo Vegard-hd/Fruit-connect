@@ -5,6 +5,7 @@ const fruitService = require("../services/fruits");
 const FruitService = new fruitService(db);
 const randomFruit = require("../functions/randomFruit");
 const {
+  fruitLogic,
   calculateEqualFruits,
   calculateRow,
 } = require("../functions/checkEqualFruits");
@@ -23,26 +24,13 @@ router.post("/", async (req, res, next) => {
     const gameFruitArr = JSON.parse(bufferToString);
 
     // 2) Parse user input
-    const clickedFruit = req.body.fruitData;
+    const clickedFruit = req.body.fruit;
     const convertedInput = await JSON.parse(clickedFruit);
-    const mappedBody = {
-      clickedRow: Number.parseInt(convertedInput.clickedRow, 10), // e.g. 1..12
-      fruitId: convertedInput.fruitId, // e.g. 'OWUVRL'
-      yAxis: Number.parseInt(convertedInput.yAxis, 10), // e.g. 0..9
-    };
-
-    // 3) Calculate row/column indices (if you store rows contiguously in a 1D array)
-    const fruitsPerRow = 10; // number of vertical fruits per row
-    const rowIndex = mappedBody.clickedRow - 1; // zero-based row index
-    const rowStart = rowIndex * fruitsPerRow; // start index in the array for this row
-    const rowEnd = rowStart + fruitsPerRow - 1; // end index in the array for this row
-    console.log(
-      `rowstart: ${rowStart}, rowend: ${rowEnd}, rowindex: ${rowIndex}`
-    );
+    const clickedId = await JSON.parse(clickedFruit);
 
     // 4) Option A: locate the clicked fruit by ID if needed
     const clickedIndex = gameFruitArr.findIndex(
-      (element) => element?.i?.id === mappedBody.fruitId
+      (element) => element?.i?.id === clickedId
     );
 
     // If the fruit isn't found, handle error
@@ -53,108 +41,11 @@ router.post("/", async (req, res, next) => {
     //handle extra check to match backend fruit type with userinput
     const clickedFruitBackend = gameFruitArr[clickedIndex].i.fruit;
     const clickedFruitId = gameFruitArr[clickedIndex].i.id;
-    if (clickedFruitId !== mappedBody.fruitId) {
+    if (clickedFruitId !== clickedId) {
       throw new Error("id user provided is not correct");
     }
-
-    // 5) Invert the shifting direction
-    //    Example: If you want to remove the clicked fruit and shift everything
-    //    *above* it “up”, you loop from clickedIndex upward.
-    //
-    //    For example, if yAxis=9 (topmost) is removed, everything else gets lifted
-    //    toward the top, and you insert a new fruit at the *bottom*.
-    //
-    //    This loop copies the element just above i down into position i.
-
-    const arrOfSets = new Array();
-
-    for (let i = clickedIndex - 1; i >= rowStart; i--) {
-      console.log("i in loop is .... ", i);
-      console.log("fruit in loop is .... ", gameFruitArr[i].i.fruit);
-      if (gameFruitArr[i].i.fruit === clickedFruitBackend) {
-        arrOfSets.push(
-          calculateEqualFruits(gameFruitArr, i, rowIndex, rowStart, rowEnd)
-        );
-      } else {
-        break;
-      }
-    }
-
-    for (let i = clickedIndex + 1; i <= rowEnd; i++) {
-      console.log("i in loop is .... ", i);
-      console.log("fruit in loop is .... ", gameFruitArr[i].i.fruit);
-      if (gameFruitArr[i].i.fruit === clickedFruitBackend) {
-        arrOfSets.push(
-          calculateEqualFruits(gameFruitArr, i, rowIndex, rowStart, rowEnd)
-        );
-      } else {
-        break;
-      }
-    }
-
-    arrOfSets.push(
-      calculateEqualFruits(
-        gameFruitArr,
-        clickedIndex,
-        rowIndex,
-        rowStart,
-        rowEnd
-      )
-    );
-
-    const deletedIndexes = new Array();
-
-    function getIndex(fruitid = "ABDCDA") {
-      return gameFruitArr.findIndex((element) => element?.i?.id === fruitid);
-    }
-
-    arrOfSets.forEach((element) => {
-      if (element.size) {
-        element.forEach((ele2) => deletedIndexes.push(getIndex(ele2)));
-      } else deletedIndexes.push(getIndex(element));
-    });
-    // console.log("Score is ", arrOfSets);
-    const mappedIndexes = deletedIndexes.map((element) => {
-      return {
-        index: element,
-        row: calculateRow(element),
-      };
-    });
-    const sortedMappedIndexes = mappedIndexes.sort((a, b) => b.index - a.index);
-    console.dir(sortedMappedIndexes);
-    // todo : find index of each fruit in completedSet + row
-    // remove fruits by their ID
-    // add new fruits at the top of
-
-    for (let i = sortedMappedIndexes.length - 1; i >= 0; i--) {
-      const element = sortedMappedIndexes[i];
-      // TODO: shift fruits in each row once to prevent unaligned array
-      gameFruitArr.splice(element.index, 1);
-      let thisRow = element.row * 10;
-      gameFruitArr.splice(thisRow, 0, { i: randomFruit() });
-    }
-
-    // for (let i = 0; i < sortedMappedIndexes.length; i++) {
-    //   const element = sortedMappedIndexes[i];
-    //   //TODO: shift fruits in each row once to prevent unaligned array
-    //   gameFruitArr.splice(element.index, 1);
-    // }
-
-    // let rowStart = element.row * 10;
-    // for (let i = clickedIndex; i > rowStart; i--) {
-    //   gameFruitArr[i] = gameFruitArr[i - 1];
-    // }
-    // 6) Insert new fruit at the top or bottom as needed:
-    //    - If you want the new fruit at the *bottom* after shifting, do:
-
-    //    - Alternatively, if you want the new fruit at the *top* after shifting, invert the logic:
-    //      for (let i = clickedIndex; i < rowEnd; i++) { ... }
-    //      gameFruitArr[rowEnd] = { i: randomFruit() };
-
-    // 7) Save updated array back to DB
-    // console.log(deletedFruitIds);
-
-    const jsonFruitGrid = JSON.stringify(gameFruitArr);
+    const output = fruitLogic(gameFruitArr, clickedIndex);
+    const jsonFruitGrid = JSON.stringify(output);
     await FruitService.update(jsonFruitGrid);
 
     return res.status(201).json(jsonFruitGrid);
