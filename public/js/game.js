@@ -47,11 +47,7 @@ $(function () {
         regex.exec(parentRow)?.[0] ?? regex2.exec(parentRow)?.[0];
       fruitId = $(e.target)[0].id;
       lastFruit = $(e.target)[0];
-      // while (lastFruit) {
-      //   yAxis--;
-      //   lastFruit = $(lastFruit).next();
-      //   if (!lastFruit[0]) break;
-      // }
+
       let output = {
         clickedRow: clickedRow,
         fruitId: fruitId,

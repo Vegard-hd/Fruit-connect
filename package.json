@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "@sequelize/sqlite3": "^7.0.0-alpha.43",
+    "bootstrap": "^5.3.3",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",

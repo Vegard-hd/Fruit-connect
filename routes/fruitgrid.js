@@ -44,15 +44,15 @@ router.post("/", async (req, res, next) => {
       10,
       12
     );
-    const finishedArr = await removeAndShiftFruits(
-      gameFruitArr,
-      connectedIndices,
-      randomFruit
-    );
-    const jsonFruitGrid = JSON.stringify(finishedArr);
-    await FruitService.update(jsonFruitGrid);
 
-    return res.status(201).json(jsonFruitGrid);
+    await removeAndShiftFruits(gameFruitArr, connectedIndices, randomFruit)
+      .then(async (data) => {
+        const jsonFruitGrid = JSON.stringify(data);
+        await FruitService.update(jsonFruitGrid);
+
+        return res.status(201).json(jsonFruitGrid);
+      })
+      .catch((err) => next(err));
   } catch (error) {
     console.warn(error);
     return res.status(500).end();
