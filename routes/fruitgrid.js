@@ -1,8 +1,11 @@
 var express = require("express");
 var router = express.Router();
 const db = require("../models/index");
-const fruitService = require("../services/fruits");
-const FruitService = new fruitService(db);
+// const fruitService = require("../services/fruits"); OLD DB
+// const FruitService = new fruitService(db); OLD DB
+
+const FruitService = require("../services/FruitService");
+const fruitService = new FruitService();
 const randomFruit = require("../functions/randomFruit");
 const {
   removeAndShiftFruits,
@@ -15,10 +18,10 @@ const {
 router.post("/", async (req, res, next) => {
   try {
     // 1) Retrieve or create the stored data
-    let data = await FruitService.getOne(1);
+    let data = await fruitService.getOne(1);
     if (!data) {
-      await FruitService.create();
-      data = await FruitService.getOne(1);
+      await fruitService.create();
+      data = await fruitService.getOne(1);
     }
     const dataBuffer = Buffer.from(data?.[0]?.fruitgrid ?? data.fruitgrid);
     const bufferToString = dataBuffer.toString("utf-8");
@@ -44,15 +47,15 @@ router.post("/", async (req, res, next) => {
       10,
       12
     );
+    const finishedArr = await removeAndShiftFruits(
+      gameFruitArr,
+      connectedIndices,
+      randomFruit
+    );
+    const jsonFruitGrid = JSON.stringify(finishedArr);
+    await fruitService.update(jsonFruitGrid);
 
-    await removeAndShiftFruits(gameFruitArr, connectedIndices, randomFruit)
-      .then(async (data) => {
-        const jsonFruitGrid = JSON.stringify(data);
-        await FruitService.update(jsonFruitGrid);
-
-        return res.status(201).json(jsonFruitGrid);
-      })
-      .catch((err) => next(err));
+    return res.status(201).json(jsonFruitGrid);
   } catch (error) {
     console.warn(error);
     return res.status(500).end();
@@ -61,11 +64,11 @@ router.post("/", async (req, res, next) => {
 
 router.get("/", async (req, res, next) => {
   try {
-    let data = await FruitService.getOne(1);
+    let data = await fruitService.getOne(1);
     if (!data) {
-      await FruitService.create();
+      await fruitService.create();
     }
-    data = await FruitService.getOne(1);
+    data = await fruitService.getOne(1);
     // console.log(data);
     // const data = await FruitService.getAll();
     const dataBuffer = Buffer.from(data?.[0]?.fruitgrid ?? data.fruitgrid);

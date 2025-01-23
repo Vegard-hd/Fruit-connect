@@ -4,7 +4,7 @@
   "description": "The objective of the game is to align three fruits either vertically or horizontally to earn points.",
   "main": "jquery-3.6.0.js",
   "scripts": {
-    "start": "nodemon ./bin/www",
+    "start": "bun run ./bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -12,7 +12,6 @@
   "license": "ISC",
   "dependencies": {
     "@sequelize/sqlite3": "^7.0.0-alpha.43",
-    "bootstrap": "^5.3.3",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",

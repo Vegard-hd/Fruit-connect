@@ -1,4 +1,4 @@
-module.exports = (sequelize, Sequelize) => {
+/* module.exports = (sequelize, Sequelize) => {
   const fruit = sequelize.define(
     "score",
     {
@@ -13,3 +13,4 @@ module.exports = (sequelize, Sequelize) => {
   );
   return fruit;
 };
+ */
