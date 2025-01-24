@@ -1,0 +1,4 @@
+# Caddyfile
+5.196.7.50 {
+    reverse_proxy web:3000
+}

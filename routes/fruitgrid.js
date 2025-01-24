@@ -1,8 +1,5 @@
 var express = require("express");
 var router = express.Router();
-const db = require("../models/index");
-// const fruitService = require("../services/fruits"); OLD DB
-// const FruitService = new fruitService(db); OLD DB
 
 const FruitService = require("../services/FruitService");
 const fruitService = new FruitService();

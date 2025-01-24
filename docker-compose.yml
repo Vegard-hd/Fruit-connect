@@ -1,0 +1,29 @@
+version: "3"
+
+services:
+  web:
+    image: vegdak/fruitcrush:latest
+    networks:
+      - caddy_network
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+
+    volumes:
+      - /home/debian/:/etc/caddy
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - caddy_network
+
+networks:
+  caddy_network:
+    driver: overlay
+
+volumes:
+  caddy_data:
+  caddy_config:
