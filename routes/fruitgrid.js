@@ -21,8 +21,9 @@ router.post("/", async (req, res, next) => {
     const bufferToString = dataBuffer.toString("utf-8");
     const gameFruitArr = JSON.parse(bufferToString);
 
-    const clickedFruit = req.body.fruit;
-    const clickedId = await JSON.parse(clickedFruit);
+    // const clickedFruit = req.body.fruit;
+    // console.log(req.body.fruit);
+    const clickedId = req.body.fruit;
 
     const clickedIndex = gameFruitArr.findIndex(
       (element) => element?.i?.id === clickedId

@@ -1,67 +1,62 @@
-// REF: https://stackoverflow.com/questions/29085197/how-do-you-json-stringify-an-es6-map
-
-$(function () {
-  function updateGrid(data, init = false) {
-    try {
-      if (init === true) {
-        for (let i = 1; i <= 12; i++) {
-          $(`#row${i}`).empty();
+$(async function () {
+  async function updateGrid(data, init = false) {
+    const myPromise = new Promise(async (resolve, reject) => {
+      try {
+        if (init === true) {
+          for (let i = 1; i <= 12; i++) {
+            $(`#row${i}`).empty();
+          }
+          // clear fruits;
         }
-        // clear fruits;
+        const backToObj = await JSON.parse(data);
+        let count = 0;
+        let rowCount = 1;
+        backToObj.forEach((element, index) => {
+          let fruit = element.i.fruit;
+          let src = element.i.src;
+          let id = element.i.id;
+          count++;
+          $(`#row${rowCount}`).append(
+            `<img id="${id}" src="${src}" alt="${fruit}" />`
+          );
+          if (count >= 10) {
+            count = 0;
+            rowCount++;
+          }
+        });
+        setTimeout(() => {
+          resolve();
+        }, 1000);
+      } catch (error) {
+        console.error(error);
+        reject(error);
       }
-      const backToObj = JSON.parse(data);
-      console.log(backToObj);
-      let count = 0;
-      let rowCount = 1;
-      backToObj.forEach((element, index) => {
-        let fruit = element.i.fruit;
-        let src = element.i.src;
-        let id = element.i.id;
-        count++;
-        $(`#row${rowCount}`).append(
-          `<img id="${id}" src="${src}" alt="${fruit}" />`
-        );
-        if (count >= 10) {
-          count = 0;
-          rowCount++;
-        }
-        // console.log(count, rowCount, fruit, src, id);
-      });
-      // console.log(backToObj);
-    } catch (error) {
-      console.error(error);
-    }
+    });
+    return await myPromise;
   }
-  $.get("/fruitgrid", function (data) {
-    updateGrid(data, false);
+
+  await (await fetch("/fruitgrid")).json().then(async (data) => {
+    await updateGrid(data, false);
   });
 
-  $(document).on("click", function (e) {
+  $(document).on("click", async function (e) {
     if (e.target.tagName === "IMG") {
-      let yAxis = 11;
-      let fruitId, parentRow, lastFruit;
-      parentRow = $(e.target).parent()[0].id;
-      const regex = /[0-9][0-9]/g;
-      const regex2 = /[0-9]/;
-      let clickedRow =
-        regex.exec(parentRow)?.[0] ?? regex2.exec(parentRow)?.[0];
-      fruitId = $(e.target)[0].id;
-      lastFruit = $(e.target)[0];
-      // while (lastFruit) {
-      //   yAxis--;
-      //   lastFruit = $(lastFruit).next();
-      //   if (!lastFruit[0]) break;
-      // }
-      let output = {
-        clickedRow: clickedRow,
-        fruitId: fruitId,
-        yAxis: yAxis,
-      };
-      output = JSON.stringify(output);
-      $.post("/fruitgrid", { fruit: JSON.stringify(fruitId) }).done(function (
-        data
-      ) {
-        updateGrid(data, true);
+      let fruitId;
+      fruitId = await $(e.target)[0].id;
+
+      if (!fruitId) return;
+      const reqBody = JSON.stringify({ fruit: fruitId });
+      const request = new Request("/fruitgrid", {
+        method: "POST",
+        body: reqBody,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      await fetch(request).then((response) => {
+        response.json().then(async (newData) => {
+          await updateGrid(newData, true);
+        });
       });
     }
   });
