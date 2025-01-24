@@ -4,12 +4,13 @@ var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-
+const compression = require("compression");
 var indexRouter = require("./routes/index");
 var gridRouter = require("./routes/fruitgrid");
 
 var app = express();
 
+app.use(compression());
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -38,22 +39,6 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 });
-
-// Create an HTTP server using the Express app
-const http = require("http");
-const server = http.createServer(app);
-
-// Attach the Socket.io server to the HTTP server
-// const { Server } = require("socket.io");
-// const io = new Server(server);
-
-// io.on("connection", (socket) => {
-//   console.log("a user connected");
-
-//   socket.on("disconnect", () => {
-//     console.log("user disconnected");
-//   });
-// });
 
 // error handler
 app.use(function (err, req, res, next) {

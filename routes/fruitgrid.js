@@ -6,10 +6,7 @@ const fruitService = new FruitService();
 const randomFruit = require("../functions/randomFruit");
 const {
   removeAndShiftFruits,
-  fruitLogic,
   findConnectedFruits,
-  calculateEqualFruits,
-  calculateRow,
 } = require("../functions/checkEqualFruits");
 
 router.post("/", async (req, res, next) => {
