@@ -3,6 +3,7 @@ var router = express.Router();
 
 const FruitService = require("../services/FruitService");
 const fruitService = new FruitService();
+
 const randomFruit = require("../functions/randomFruit");
 const {
   removeAndShiftFruits,
@@ -60,12 +61,11 @@ router.post("/", async (req, res, next) => {
 router.get("/", async (req, res, next) => {
   try {
     let data = await fruitService.getOne(1);
+
     if (!data) {
       await fruitService.create();
+      data = await fruitService.getOne(1);
     }
-    data = await fruitService.getOne(1);
-    // console.log(data);
-    // const data = await FruitService.getAll();
     const dataBuffer = Buffer.from(data?.[0]?.fruitgrid ?? data.fruitgrid);
     const bufferToString = dataBuffer.toString("utf-8");
     // console.log(bufferToString);
