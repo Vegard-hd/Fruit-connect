@@ -7,7 +7,7 @@ module.exports = {
     const promise = await new Promise((resolve, reject) => {
       const startFruit = gameFruitArr[startIndex].i.fruit; // Fruit type at starting cell
       const visited = new Set(); // Track visited indices
-      const stack = [startIndex]; // DFS stack (or use queue for BFS)
+      const stack = [startIndex]; // DFS Depth first search algorith
 
       // Helper to safely check array bounds
       function inBounds(row, col) {
@@ -30,7 +30,7 @@ module.exports = {
       while (stack.length > 0) {
         const currentIndex = stack.pop();
         if (visited.has(currentIndex)) {
-          continue;
+          continue; // skips the itiration without breaking the loop
         }
         visited.add(currentIndex);
 

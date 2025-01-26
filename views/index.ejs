@@ -4,13 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fruit Crush</title>
-    <link rel="stylesheet" href="materialize/css/materialize.css" />
+    <link rel="stylesheet" href="/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/css/style.css" />
   </head>
+  <%- include('./partials/navbar.ejs') %>
   <body>
-    <div class="center-align">
-      <h2>Fruit Crush</h2>
-      <h2>Score is <i id="gameScore"> <%= score.gamescore %></i></h2>
+    <div class="text-center">
+      <h2 class="text-bg-warning pt-3 pb-3">
+        Score is <i id="gameScore"> <%= score.gamescore %></i>
+      </h2>
     </div>
     <main class="parentContainer">
       <div id="gridWrapper">
@@ -29,6 +31,7 @@
       </div>
     </main>
     <script src="/js/jquerylatest.slim.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
     <script src="/js/gsap.min.js"></script>
     <script src="./materialize/js/materialize.js"></script>
     <script src="/js/game.js"></script>

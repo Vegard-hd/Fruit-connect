@@ -19,13 +19,10 @@ class FruitService {
   }
 
   async update(scoreToIncrement, id) {
-    const currentScore = await this.getOne(1);
-
     const stmt = this.db.prepare(
-      "UPDATE score SET gamescore = ?1 += ?2 WHERE id = ?3"
+      "UPDATE score SET gamescore = gamescore + ?1 WHERE id = ?2"
     );
-
-    return stmt.run(currentScore, scoreToIncrement, id);
+    return stmt.run(scoreToIncrement, id);
   }
 
   async getAll() {
