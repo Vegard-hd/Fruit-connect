@@ -43,9 +43,17 @@ router.post("/", async (req, res, next) => {
       10,
       12
     );
+    console.log(connectedIndices);
+    const indexPlusNewFruit = [...connectedIndices].map((element) => {
+      return {
+        index: element,
+        newFruit: randomFruit(),
+      };
+    });
+
     const finishedArr = await removeAndShiftFruits(
       gameFruitArr,
-      connectedIndices,
+      indexPlusNewFruit,
       randomFruit
     );
     const jsonFruitGrid = JSON.stringify(finishedArr);

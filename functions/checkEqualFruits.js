@@ -76,13 +76,17 @@ module.exports = {
 
       // Ensure we process from smaller to larger indices so we don’t overwrite
       // items we haven't shifted yet.
-      const sortedIndices = Array.from(indicesToRemove).sort((a, b) => a - b);
-
-      for (const index of sortedIndices) {
+      const indexArr = indicesToRemove
+        // .filter((element) => element?.index)
+        .sort((a, b) => a?.index - b?.index);
+      // const sortedIndices = Array.from(indicesToRemove).sort((a, b) => a - b);
+      console.log(indexArr);
+      for (const element of indexArr) {
+        const index = element?.index;
         // Calculate which row the index is in
         const row = Math.floor(index / width);
         const rowStart = row * width; // start index of this row
-        const rowEnd = rowStart + width - 1;
+        // const rowEnd = rowStart + width - 1;
 
         // Shift all fruits from rowStart...index-1 downward by one slot
         // For example, if index = 32, we shift [rowStart...31] downward into [rowStart+1...32].
@@ -92,7 +96,7 @@ module.exports = {
         }
 
         // Place a new fruit at the start of the row (rowStart)
-        const newFruitObject = { i: randomFruit() }; // e.g. returns { fruit: "cherry", id: 999 }
+        const newFruitObject = { i: element.newFruit }; // e.g. returns { fruit: "cherry", id: 999 }
         gameFruitArr[rowStart] = newFruitObject;
         // gameFruitArr[rowStart].i.id = newFruitObject.id;
       }
