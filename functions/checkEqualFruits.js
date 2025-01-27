@@ -80,7 +80,6 @@ module.exports = {
         // .filter((element) => element?.index)
         .sort((a, b) => a?.index - b?.index);
       // const sortedIndices = Array.from(indicesToRemove).sort((a, b) => a - b);
-      console.log(indexArr);
       for (const element of indexArr) {
         const index = element?.index;
         // Calculate which row the index is in
@@ -96,8 +95,7 @@ module.exports = {
         }
 
         // Place a new fruit at the start of the row (rowStart)
-        const newFruitObject = { i: element.newFruit }; // e.g. returns { fruit: "cherry", id: 999 }
-        gameFruitArr[rowStart] = newFruitObject;
+        gameFruitArr[rowStart] = { i: element.newFruit };
         // gameFruitArr[rowStart].i.id = newFruitObject.id;
       }
       resolve(gameFruitArr);

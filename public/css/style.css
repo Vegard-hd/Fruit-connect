@@ -26,6 +26,7 @@ img {
     /* gap: 20px; */
     z-index: 99;
     margin: auto;
+    align-items: end;
 }
 /* .fruitBox {
 	flex-direction: column-reverse;

@@ -22,8 +22,6 @@ router.post("/", async (req, res, next) => {
     const bufferToString = dataBuffer.toString("utf-8");
     const gameFruitArr = JSON.parse(bufferToString);
 
-    // const clickedFruit = req.body.fruit;
-    // console.log(req.body.fruit);
     const clickedId = req.body.fruit;
 
     const clickedIndex = gameFruitArr.findIndex(
@@ -43,7 +41,6 @@ router.post("/", async (req, res, next) => {
       10,
       12
     );
-    console.log(connectedIndices);
     const indexPlusNewFruit = [...connectedIndices].map((element) => {
       return {
         index: element,
@@ -57,9 +54,10 @@ router.post("/", async (req, res, next) => {
       randomFruit
     );
     const jsonFruitGrid = JSON.stringify(finishedArr);
-    await fruitService.update(jsonFruitGrid);
+    await fruitService.update(jsonFruitGrid); //rewrites entire fruitGameArr
 
-    return res.status(201).json(jsonFruitGrid);
+    const jsonNewDataAndFruit = JSON.stringify(indexPlusNewFruit); // sends only indexes to remove + newFruits
+    return res.status(201).json(jsonNewDataAndFruit);
   } catch (error) {
     console.warn(error);
     return res.status(500).end();

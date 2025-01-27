@@ -44,8 +44,6 @@ class GameClass {
         prevFruitLeft = nextFruit;
       }
     }
-
-    console.table(this.deletedFruitIds);
     return this.deletedFruitIds;
   }
 }
@@ -70,7 +68,6 @@ class TraverseGrid extends GameClass {
       this.gameFruitArr[i]?.i?.fruit ===
       this.gameFruitArr[this.clickedIndex]?.i?.fruit
     );
-    console.table(this.deletedFruitIds);
     return this.deletedFruitIds;
   }
 }

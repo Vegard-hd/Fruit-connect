@@ -1,5 +1,31 @@
 $(async function () {
-  async function updateGrid(data, init = false) {
+  async function updateGrid(newData) {
+    const promise = await new Promise((resolve, reject) => {
+      const newDataObj = JSON.parse(newData);
+      const mappedObj = newDataObj.map((element) => {
+        return {
+          row: Math.floor(element.index / 10),
+          index: element.index,
+          col: element.index % 10,
+          newFruit: element.newFruit,
+        };
+      });
+      mappedObj.forEach((element) => {
+        const thisrow = element.row + 1;
+        const thisFruit = [...$(`#row${thisrow}`).children()].find(
+          (val, index) => index === element.col
+        );
+        $(thisFruit).remove();
+        $(`#row${thisrow}`).prepend(
+          `<img id="${element.newFruit.id}" src="${element.newFruit.src}" alt="${element.newFruit.fruit}" />`
+        );
+      });
+      resolve("success");
+    });
+    return await promise;
+  }
+
+  async function initGrid(data, init = false) {
     const myPromise = new Promise(async (resolve, reject) => {
       try {
         if (init === true) {
@@ -36,7 +62,7 @@ $(async function () {
   }
 
   await (await fetch("/fruitgrid")).json().then(async (data) => {
-    await updateGrid(data, false);
+    await initGrid(data, false);
   });
 
   $(document).on("click", async function (e) {
@@ -55,7 +81,7 @@ $(async function () {
       });
       await fetch(request).then((response) => {
         response.json().then(async (newData) => {
-          await updateGrid(newData, true);
+          await updateGrid(newData);
         });
       });
     }
