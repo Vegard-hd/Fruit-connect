@@ -75,7 +75,7 @@ module.exports = {
       const width = 10; // Number of columns in each row
 
       // Ensure we process from smaller to larger indices so we don’t overwrite
-      // items we haven't shifted yet. (Or group by row if you prefer row-by-row approach.)
+      // items we haven't shifted yet.
       const sortedIndices = Array.from(indicesToRemove).sort((a, b) => a - b);
 
       for (const index of sortedIndices) {
