@@ -10,15 +10,30 @@ $(async function () {
           newFruit: element.newFruit,
         };
       });
-      mappedObj.forEach((element) => {
+      mappedObj.forEach(async (element) => {
         const thisrow = element.row + 1;
         const thisFruit = [...$(`#row${thisrow}`).children()].find(
           (val, index) => index === element.col
         );
-        $(thisFruit).remove();
-        $(`#row${thisrow}`).prepend(
-          `<img id="${element.newFruit.id}" src="${element.newFruit.src}" alt="${element.newFruit.fruit}" />`
-        );
+        await gsap
+          .to(thisFruit, {
+            opacity: 0,
+            scale: 2.5,
+            duration: 0.2,
+            ease: "elastic.out(2, 0.3)",
+          })
+          .then(() => $(thisFruit).remove())
+          .then(() => {
+            $(`#row${thisrow}`).prepend(
+              `<img id="${element.newFruit.id}" src="${element.newFruit.src}" alt="${element.newFruit.fruit}" />`
+            );
+          });
+        var tl = gsap.timeline({});
+
+        const ge = `#${element.newFruit.id}`;
+        tl.to(ge, { scale: 1.6, duration: 0.1 });
+        tl.to(ge, { scale: 0.8, duration: 0.1 });
+        tl.to(ge, { scale: 1, duration: 0.2, ease: "elastic.out(2,0.3)" });
       });
       resolve("success");
     });
@@ -67,8 +82,7 @@ $(async function () {
 
   $(document).on("click", async function (e) {
     if (e.target.tagName === "IMG") {
-      let fruitId;
-      fruitId = await $(e.target)[0].id;
+      let fruitId = await $(e.target)[0].id;
 
       if (!fruitId) return;
       const reqBody = JSON.stringify({ fruit: fruitId });

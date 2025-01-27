@@ -20,7 +20,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-
+app.use(
+  "/js/motion.js",
+  express.static(path.join(__dirname, "node_modules/motion/dist/motion.js"))
+);
+app.use(
+  "/css/",
+  express.static(path.join(__dirname, "node_modules/bootstrap/dist/css/"))
+);
+app.use(
+  "/js/",
+  express.static(path.join(__dirname, "node_modules/bootstrap/dist/js/"))
+);
 // router endpoint binding
 app.use("/", indexRouter);
 app.use("/fruitgrid", gridRouter);
