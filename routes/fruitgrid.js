@@ -18,6 +18,7 @@ router.post("/", async (req, res, next) => {
       await fruitService.create();
       data = await fruitService.getOne(1);
     }
+
     const dataBuffer = Buffer.from(data?.[0]?.fruitgrid ?? data.fruitgrid);
     const bufferToString = dataBuffer.toString("utf-8");
     const gameFruitArr = JSON.parse(bufferToString);
