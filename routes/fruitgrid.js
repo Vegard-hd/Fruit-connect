@@ -26,7 +26,7 @@ router.post("/", async (req, res, next) => {
     const clickedId = req.body.fruit;
 
     const clickedIndex = gameFruitArr.findIndex(
-      (element) => element?.i?.id === clickedId
+      (element) => element?.id === clickedId
     );
 
     // If the fruit isn't found, handle error

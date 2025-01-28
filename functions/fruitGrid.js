@@ -21,7 +21,7 @@ class FruitGrid {
   gridOfFruits = new Array();
   initGrid() {
     for (let i = 0; i <= 119; i++) {
-      this.gridOfFruits.push({ i: randomfruit() });
+      this.gridOfFruits.push(randomfruit());
     }
     // console.table(this.gridOfFruits);
   }

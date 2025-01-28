@@ -19,7 +19,7 @@ $(async function () {
           .to(thisFruit, {
             opacity: 0,
             scale: 2.5,
-            duration: 0.2,
+            duration: 0.1,
             ease: "elastic.out(2, 0.3)",
           })
           .then(() => $(thisFruit).remove())
@@ -33,7 +33,7 @@ $(async function () {
         const ge = `#${element.newFruit.id}`;
         tl.to(ge, { scale: 1.6, duration: 0.1 });
         tl.to(ge, { scale: 0.8, duration: 0.1 });
-        tl.to(ge, { scale: 1, duration: 0.2, ease: "elastic.out(2,0.3)" });
+        tl.to(ge, { scale: 1, duration: 0.1, ease: "elastic.out(2,0.3)" });
       });
       resolve("success");
     });
@@ -53,9 +53,9 @@ $(async function () {
         let count = 0;
         let rowCount = 1;
         backToObj.forEach((element, index) => {
-          let fruit = element.i.fruit;
-          let src = element.i.src;
-          let id = element.i.id;
+          let fruit = element.fruit;
+          let src = element.src;
+          let id = element.id;
           count++;
           $(`#row${rowCount}`).append(
             `<img id="${id}" src="${src}" alt="${fruit}" />`
