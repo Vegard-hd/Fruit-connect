@@ -1,15 +1,43 @@
 $(async function () {
-  var init = false;
-  const ws = new WebSocket("ws://localhost:3000/ws");
-  ws.onmessage = async (event) => {
-    if (event.data && !init) {
-      init = true;
-      await initGrid(event.data);
-    } else {
-      await updateGrid(event.data);
-    }
-    // $nowTime.textContent = event.data;
-  };
+  $("#startGame").on("click", async function (e) {
+    await gsap
+      .to(".buttonWrapper", {
+        scale: 1.1,
+        duration: 0.1,
+        ease: "elastic.out(2, 0.3)",
+      })
+      .then(() => {
+        $(".buttonWrapper").remove();
+        $(".parentContainer").toggleClass("d-none");
+      })
+      .catch((e) => {
+        console.warn("failed to start game");
+      });
+  });
+  const socket = new ReconnectingWebSocket("/ws");
+
+  socket.addEventListener("open", () => {
+    console.log("Connection established");
+  });
+
+  socket.addEventListener("message", (event) => {
+    console.log("Received:", event.data);
+  });
+  // const ws = new WebSocket("/ws");
+  // var init = false;
+  // ws.onclose = (event) => {
+  //   console.warn(event);
+  // };
+  // ws.onmessage = async (event) => {
+  //   console.log(event);
+  //   if (event.data && !init) {
+  //     init = true;
+  //     await initGrid(event.data);
+  //   } else {
+  //     await updateGrid(event.data);
+  //   }
+  //   // $nowTime.textContent = event.data;
+  // };
   async function updateGrid(newData) {
     const promise = await new Promise((resolve, reject) => {
       const newDataObj = JSON.parse(newData);

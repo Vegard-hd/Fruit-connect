@@ -19,5 +19,5 @@ ENV NODE_ENV=production
 EXPOSE 3000
 
 # Command to run the app
-CMD ["bun", "run", "start"]
+CMD ["bun", "run", "app"]
 
