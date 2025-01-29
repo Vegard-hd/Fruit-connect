@@ -1,16 +1,16 @@
-const ShortUniqueId = require("short-unique-id");
+import ShortUniqueId from "short-unique-id";
 const { randomUUID } = new ShortUniqueId({
   length: 6,
   dictionary: "alpha_upper",
 });
 
-function randomFruit() {
-  const pear = `/assets/fruit-pear-pears-svgrepo-com.svg`;
-  const mango = `/assets/fruit-manga-mango-svgrepo-com.svg`;
-  const lemon = `/assets/fruit-limao-limon-svgrepo-com.svg`;
-  const orange = `/assets/fruit-laranja-orange-svgrepo-com.svg`;
-  const apple = `/assets/apple-apples-fruit-svgrepo-com.svg`;
-  const plum = `/assets/ameixa-fruit-plum-svgrepo-com.svg`;
+export function randomFruit() {
+  const pear = `/public/assets/pear.svg`;
+  const mango = `/public/assets/mango.svg`;
+  const lemon = `/public/assets/lemon.svg`;
+  const orange = `/public/assets/orange.svg`;
+  const apple = `/public/assets/apple.svg`;
+  const plum = `/public/assets/plum.svg`;
   let svgSrc;
   let fruitType;
   let rNum = Math.floor(Math.random() * 6 + 1);
@@ -47,5 +47,3 @@ function randomFruit() {
     id: randomUUID(),
   };
 }
-
-module.exports = randomFruit;

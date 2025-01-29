@@ -13,26 +13,25 @@ const {
 router.post("/", async (req, res, next) => {
   try {
     // 1) Retrieve or create the stored data
+
     let data = await fruitService.getOne(1);
     if (!data) {
       await fruitService.create();
       data = await fruitService.getOne(1);
     }
 
-    const dataBuffer = Buffer.from(data?.[0]?.fruitgrid ?? data.fruitgrid);
-    const bufferToString = dataBuffer.toString("utf-8");
-    const gameFruitArr = JSON.parse(bufferToString);
+    const gameFruitArr = JSON.parse(data.fruitgrid);
 
-    const clickedId = req.body.fruit;
+    // const clickedId = req.body.fruit;
 
-    const clickedIndex = gameFruitArr.findIndex(
-      (element) => element?.id === clickedId
-    );
+    // const clickedIndex = gameFruitArr.findIndex(
+    //   (element) => element?.id === clickedId
+    // );
 
-    // If the fruit isn't found, handle error
-    if (clickedIndex === -1) {
-      return res.status(400).json({ message: "Fruit not found" }).end();
-    }
+    // // If the fruit isn't found, handle error
+    // if (clickedIndex === -1) {
+    //   return res.status(400).json({ message: "Fruit not found" }).end();
+    // }
 
     //handle extra check to match backend fruit type with userinput
 

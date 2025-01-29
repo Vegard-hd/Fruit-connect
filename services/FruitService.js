@@ -1,5 +1,5 @@
-const fruitGrid = require("../functions/fruitGrid");
-const { Database } = require("bun:sqlite");
+import fruitGrid from "../functions/fruitGrid";
+import { Database } from "bun:sqlite";
 
 const db = new Database("fruit_crush.db");
 
@@ -10,7 +10,7 @@ db.run(
 
 var newFruitGrid = new fruitGrid();
 
-class FruitService {
+export class FruitService {
   constructor() {
     this.db = db;
   }
@@ -40,5 +40,3 @@ class FruitService {
     return stmt.get(id);
   }
 }
-
-module.exports = FruitService;

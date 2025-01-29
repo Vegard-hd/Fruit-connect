@@ -1,4 +1,4 @@
-const randomfruit = require("./randomFruit");
+const randomfruit = require("./randomFruit").default;
 class FruitGrid {
   _reviver(key, value) {
     if (typeof value === "object" && value !== null) {

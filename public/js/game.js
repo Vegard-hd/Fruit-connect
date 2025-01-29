@@ -1,4 +1,15 @@
 $(async function () {
+  var init = false;
+  const ws = new WebSocket("ws://localhost:3000/ws");
+  ws.onmessage = async (event) => {
+    if (event.data && !init) {
+      init = true;
+      await initGrid(event.data);
+    } else {
+      await updateGrid(event.data);
+    }
+    // $nowTime.textContent = event.data;
+  };
   async function updateGrid(newData) {
     const promise = await new Promise((resolve, reject) => {
       const newDataObj = JSON.parse(newData);
@@ -40,15 +51,9 @@ $(async function () {
     return await promise;
   }
 
-  async function initGrid(data, init = false) {
+  async function initGrid(data) {
     const myPromise = new Promise(async (resolve, reject) => {
       try {
-        if (init === true) {
-          for (let i = 1; i <= 12; i++) {
-            $(`#row${i}`).empty();
-          }
-          // clear fruits;
-        }
         const backToObj = await JSON.parse(data);
         let count = 0;
         let rowCount = 1;
@@ -76,28 +81,17 @@ $(async function () {
     return await myPromise;
   }
 
-  await (await fetch("/fruitgrid")).json().then(async (data) => {
-    await initGrid(data, false);
-  });
-
   $(document).on("click", async function (e) {
-    if (e.target.tagName === "IMG") {
-      let fruitId = await $(e.target)[0].id;
-
-      if (!fruitId) return;
-      const reqBody = JSON.stringify({ fruit: fruitId });
-      const request = new Request("/fruitgrid", {
-        method: "POST",
-        body: reqBody,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      await fetch(request).then((response) => {
-        response.json().then(async (newData) => {
-          await updateGrid(newData);
-        });
-      });
+    try {
+      if (e.target.tagName === "IMG") {
+        let fruitId = await $(e.target)[0].id;
+        if (!fruitId) return;
+        const reqBody = JSON.stringify({ fruit: fruitId });
+        console.log(reqBody);
+        ws.send(reqBody);
+      }
+    } catch (error) {
+      console.warn(error);
     }
   });
 });
