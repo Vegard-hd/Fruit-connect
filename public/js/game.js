@@ -20,8 +20,11 @@ $(async function () {
   const socket = io();
 
   // Listen for initial data
+  let init;
   socket.on("initial-data", async (data) => {
+    if (init === true) return;
     await initGrid(data);
+    init = true;
     // Handle the initial fruit grid data
   });
 

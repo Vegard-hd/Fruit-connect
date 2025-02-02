@@ -145,6 +145,13 @@ export async function calculateFruitsDfs(userData, userId) {
       10,
       12
     );
+
+    console.log(connectedIndices.size);
+    let score = connectedIndices?.size
+      ? connectedIndices?.size ** connectedIndices?.size
+      : 1;
+    score = Number.parseInt(score, 10);
+    console.log(score);
     const indexPlusNewFruit = [...connectedIndices].map((element) => {
       return {
         index: element,

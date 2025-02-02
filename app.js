@@ -8,6 +8,8 @@ import path from "path";
 import { fileURLToPath } from "url";
 import morgan from "morgan";
 import compression from "compression";
+import { serialize, parse } from "cookie";
+
 const { randomUUID } = new ShortUniqueId({
   length: 10,
 });
@@ -41,8 +43,6 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-import { serialize, parse } from "cookie";
-
 // Socket.IO connection handling
 io.on("connection", async (socket) => {
   let userId;
@@ -52,14 +52,12 @@ io.on("connection", async (socket) => {
     if (headers === null) {
       userId = randomUUID();
       io.engine.on("initial_headers", (headers, request) => {
-        console.log(headers);
         headers["set-cookie"] = serialize("uid", userId, {
           sameSite: "strict",
         });
       });
     } else {
       userId = parse(headers).uid;
-      console.log("userid in parse is ", userId);
     }
 
     // Initial data fetch and send
