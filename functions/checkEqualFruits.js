@@ -113,14 +113,14 @@ async function removeAndShiftFruits(
   return promise;
 }
 
-export async function calculateFruitsDfs(userData) {
+export async function calculateFruitsDfs(userData, userId) {
   try {
     // 1) Retrieve or create the stored data
 
-    let data = await fruitService.getOne(1);
+    let data = await fruitService.getOne(userId);
     if (!data) {
-      await fruitService.create();
-      data = await fruitService.getOne(1);
+      await fruitService.create(userId);
+      data = await fruitService.getOne(userId);
     }
 
     const gameFruitArr = JSON.parse(data.fruitgrid);
@@ -158,7 +158,7 @@ export async function calculateFruitsDfs(userData) {
       randomFruit
     );
     const jsonFruitGrid = JSON.stringify(finishedArr);
-    await fruitService.update(jsonFruitGrid); //rewrites entire fruitGameArr
+    await fruitService.update(jsonFruitGrid, userId); //rewrites entire fruitGameArr
 
     const jsonNewDataAndFruit = JSON.stringify(indexPlusNewFruit); // sends only indexes to remove + newFruits
     return jsonNewDataAndFruit;

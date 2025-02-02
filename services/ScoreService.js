@@ -25,11 +25,6 @@ class FruitService {
     return stmt.run(scoreToIncrement, id);
   }
 
-  async getAll() {
-    const stmt = this.db.prepare("SELECT * FROM fruit");
-    return stmt.all();
-  }
-
   async getOne(id) {
     const stmt = this.db.prepare("SELECT * FROM score WHERE id = ?");
     return stmt.get(id);

@@ -14,30 +14,35 @@ $(async function () {
         console.warn("failed to start game");
       });
   });
-  const socket = new ReconnectingWebSocket("/ws");
 
-  socket.addEventListener("open", () => {
-    console.log("Connection established");
+  //socketio connection
+  // In your frontend JavaScript file
+  const socket = io();
+
+  // Listen for initial data
+  socket.on("initial-data", async (data) => {
+    await initGrid(data);
+    // Handle the initial fruit grid data
   });
 
-  socket.addEventListener("message", (event) => {
-    console.log("Received:", event.data);
+  // Listen for messages
+  socket.on("message", async (data) => {
+    await updateGrid(data);
+    // Handle received messages
+    // Update your UI here
   });
-  // const ws = new WebSocket("/ws");
-  // var init = false;
-  // ws.onclose = (event) => {
-  //   console.warn(event);
-  // };
-  // ws.onmessage = async (event) => {
-  //   console.log(event);
-  //   if (event.data && !init) {
-  //     init = true;
-  //     await initGrid(event.data);
-  //   } else {
-  //     await updateGrid(event.data);
-  //   }
-  //   // $nowTime.textContent = event.data;
-  // };
+
+  // Listen for errors
+  socket.on("error", (error) => {
+    console.error("Socket error:", error);
+  });
+
+  // To send messages to the server
+  function sendMessage(data) {
+    socket.emit("message", data);
+  }
+
+  // $nowTime.textContent = event.data;
   async function updateGrid(newData) {
     const promise = await new Promise((resolve, reject) => {
       const newDataObj = JSON.parse(newData);
@@ -115,8 +120,7 @@ $(async function () {
         let fruitId = await $(e.target)[0].id;
         if (!fruitId) return;
         const reqBody = JSON.stringify({ fruit: fruitId });
-        console.log(reqBody);
-        ws.send(reqBody);
+        sendMessage(reqBody);
       }
     } catch (error) {
       console.warn(error);
