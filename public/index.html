@@ -9,24 +9,32 @@
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
   </head>
 
-  <body>
+  <body class="container-fluid">
     <nav class="navbar bg-body-tertiary">
       <div class="container-sm">
         <a class="navbar-brand" href="/"><h1>Fruit crush!</h1> </a>
-        <span class="navbar-text">
-          Click fruit to get score. Align multiple fruits at the same time to
-          get a bigger score multiplier.
-        </span>
+        <span class="navbar-text"> </span>
       </div>
     </nav>
 
-    <div class="text-center">
-      <h2 class="text-bg-warning pt-3 pb-3">
+    <div class="row">
+      <h2 class="text-bg-warning pt-3 pb-3 text-center">
         Score is <i id="gameScore"> gamescore goes here</i>
       </h2>
     </div>
+
     <div class="buttonWrapper">
-      <button id="startGame" class="button-24">Start game</button>
+      <div class="row row-cols-1">
+        <button id="startGame" class="button-24">Start game</button>
+        <p class="text-bg-info p-3 rounded-1">
+          <b class="text-decoration-underline">How to play</b><br />
+          Click fruit to get score. Connect multiple fruits togheter before
+          clicking them to get a massive score multiplier.
+        </p>
+      </div>
+      <div class="row"></div>
+      <div class="row"></div>
+      <div class="row"></div>
     </div>
 
     <main class="parentContainer d-none">

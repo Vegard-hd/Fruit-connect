@@ -1,6 +1,8 @@
 import { FruitService } from "../services/FruitService";
 import { randomFruit } from "./randomFruit";
 const fruitService = new FruitService();
+const ScoreService = require("../services/ScoreService");
+const scoreService = new ScoreService();
 export /**
  * Finds all connected fruits matching the fruit at 'startIndex'
  * in a grid of 'height' rows and 'width' columns.
@@ -152,6 +154,16 @@ export async function calculateFruitsDfs(userData, userId) {
       : 1;
     score = Number.parseInt(score, 10);
     console.log(score);
+
+    const getScore = async () => {
+      let score = await scoreService.getOne(1);
+      if (!score) {
+        await scoreService.create();
+        score = scoreService.getOne(1);
+      }
+      return score;
+    };
+
     const indexPlusNewFruit = [...connectedIndices].map((element) => {
       return {
         index: element,
