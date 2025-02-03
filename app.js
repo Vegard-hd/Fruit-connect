@@ -67,12 +67,22 @@ io.on("connection", async (socket) => {
       data = await fruitService.getOne(userId);
     }
     socket.emit("initial-data", data.fruitgrid);
-
+    let userScore = 0;
+    let scoreCount = 0;
     // Handle incoming messages
     socket.on("message", async (message) => {
       try {
-        const result = await calculateFruitsDfs(message, userId);
-        socket.emit("message", result);
+        const [result, score] = await calculateFruitsDfs(message, userId);
+        if (scoreCount >= 10) {
+          //write to DB
+          //end game
+          //reset userScore and scoreCount
+          //new ID
+        }
+        userScore += score;
+        scoreCount++;
+        console.log("userScore is ...!", userScore);
+        socket.emit("message", { result: result, score: userScore });
       } catch (err) {
         socket.emit("error", `Something went wrong, error: ${err}`);
       }

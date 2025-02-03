@@ -30,7 +30,10 @@ $(async function () {
 
   // Listen for messages
   socket.on("message", async (data) => {
-    await updateGrid(data);
+    console.log(data);
+
+    await updateGrid(data.result);
+    updateScore(data.score);
     // Handle received messages
     // Update your UI here
   });
@@ -115,6 +118,10 @@ $(async function () {
       }
     });
     return await myPromise;
+  }
+
+  function updateScore(score = 1) {
+    $("#gameScore").text(score);
   }
 
   $(document).on("click", async function (e) {

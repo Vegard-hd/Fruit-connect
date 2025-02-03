@@ -148,21 +148,22 @@ export async function calculateFruitsDfs(userData, userId) {
       12
     );
 
-    console.log(connectedIndices.size);
-    let score = connectedIndices?.size
-      ? connectedIndices?.size ** connectedIndices?.size
-      : 1;
-    score = Number.parseInt(score, 10);
-    console.log(score);
+    let score = 0;
+    if (connectedIndices.size >= 3) {
+      score = connectedIndices?.size
+        ? connectedIndices?.size * connectedIndices?.size
+        : 1;
+      score = Number.parseInt(score, 10);
+    }
 
-    const getScore = async () => {
-      let score = await scoreService.getOne(1);
-      if (!score) {
-        await scoreService.create();
-        score = scoreService.getOne(1);
-      }
-      return score;
-    };
+    // const getScore = async () => {
+    //   let score = await scoreService.getOne(1);
+    //   if (!score) {
+    //     await scoreService.create();
+    //     score = scoreService.getOne(1);
+    //   }
+    //   return score;
+    // };
 
     const indexPlusNewFruit = [...connectedIndices].map((element) => {
       return {
@@ -180,7 +181,7 @@ export async function calculateFruitsDfs(userData, userId) {
     await fruitService.update(jsonFruitGrid, userId); //rewrites entire fruitGameArr
 
     const jsonNewDataAndFruit = JSON.stringify(indexPlusNewFruit); // sends only indexes to remove + newFruits
-    return jsonNewDataAndFruit;
+    return [jsonNewDataAndFruit, score];
   } catch (error) {
     console.warn(error);
   }
