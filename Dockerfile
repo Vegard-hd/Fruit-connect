@@ -10,6 +10,8 @@ COPY package*.json ./
 # Install dependencies
 RUN bun install --production
 
+# build the script and CSS files
+RUN bun run build
 # Copy the rest of the application code
 COPY . .
 
