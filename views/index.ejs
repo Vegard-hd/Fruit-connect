@@ -1,20 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fruit Crush</title>
-    <link rel="stylesheet" href="/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/style.css" />
-  </head>
-  <%- include('./partials/navbar.ejs') %>
-  <body>
-    <div class="text-center">
-      <h2 class="text-bg-warning pt-3 pb-3">
-        Score is <i id="gameScore"> <%= score.gamescore %></i>
+  <%- include('./partials/head.ejs') %>
+  <body class="container-fluid">
+    <div class="row">
+      <h2 class="text-bg-warning pt-3 pb-3 text-center">
+        Score is <i class="fs-1" id="gameScore"> 0</i>
       </h2>
     </div>
-    <main class="parentContainer">
+
+    <div class="buttonWrapper">
+      <div class="row row-cols-1">
+        <button id="startGame" class="button-24">Start game</button>
+        <p class="text p-3 rounded-1">
+          <b class="text-decoration-underline">How to play</b><br />
+          Click fruit to pop them. Connect more than three fruits of the same
+          type to get score. The more fruits you pop the more score you get.
+        </p>
+      </div>
+      <div class="row"></div>
+      <div class="row"></div>
+      <div class="row"></div>
+    </div>
+
+    <main class="parentContainer d-none">
       <div id="gridWrapper">
         <div id="row1"></div>
         <div id="row2"></div>
@@ -30,11 +38,7 @@
         <div id="row12"></div>
       </div>
     </main>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
-
-    <script src="/js/jquerylatest.slim.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/motion.js"></script>
-    <script src="/js/game.js"></script>
+    <%- include('./partials/scoreTable.ejs') %>
   </body>
+  <%- include('./partials/script.ejs') %>
 </html>
