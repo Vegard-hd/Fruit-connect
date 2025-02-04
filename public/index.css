@@ -5,13 +5,15 @@ img {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-  width: 75px;
+  width: clamp(12px, 6vw, 45px);
 }
+
 /* Assuming this is the parent container of #gridWrapper */
 #parentContainer {
   display: flex;
   justify-content: center; /* Centers horizontally */
   align-items: center; /* Centers vertically */
+
   /* height: 100vh; Full height of the viewport */
 }
 
@@ -64,14 +66,12 @@ img {
 /* Your existing #gridWrapper styles */
 #gridWrapper {
   border: 4px solid black;
-  width: 905px;
-  height: 785px;
+
   display: grid;
   grid-template-columns: repeat(12, [col-start] 1fr);
-  padding-top: 10px;
   /* gap: 20px; */
   z-index: 99;
-  margin: auto;
+  margin: -3px;
   align-items: end;
 }
 /* .fruitBox {

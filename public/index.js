@@ -1,5 +1,3 @@
-import { SupabaseClient } from "@supabase/supabase-js";
-
 $(async function () {
   $("#startGame").on("click", async function (e) {
     await gsap
@@ -10,7 +8,7 @@ $(async function () {
       })
       .then(() => {
         $(".buttonWrapper").remove();
-        $(".parentContainer").toggleClass("d-none");
+        $("#gameContainer").toggleClass("d-none");
       })
       .catch((e) => {
         console.warn("failed to start game");

@@ -22,23 +22,25 @@
       <div class="row"></div>
     </div>
 
-    <main class="parentContainer d-none">
-      <div id="gridWrapper">
-        <div id="row1"></div>
-        <div id="row2"></div>
-        <div id="row3"></div>
-        <div id="row4"></div>
-        <div id="row5"></div>
-        <div id="row6"></div>
-        <div id="row7"></div>
-        <div id="row8"></div>
-        <div id="row9"></div>
-        <div id="row10"></div>
-        <div id="row11"></div>
-        <div id="row12"></div>
-      </div>
+    <main class="container-sm">
+      <section id="gameContainer" class="row g-0 d-none">
+        <div id="gridWrapper" class="col-md-10 col-12">
+          <div id="row1"></div>
+          <div id="row2"></div>
+          <div id="row3"></div>
+          <div id="row4"></div>
+          <div id="row5"></div>
+          <div id="row6"></div>
+          <div id="row7"></div>
+          <div id="row8"></div>
+          <div id="row9"></div>
+          <div id="row10"></div>
+          <div id="row11"></div>
+          <div id="row12"></div>
+        </div>
+        <div class="col-2"><%- include('./partials/scoreTable.ejs') %></div>
+      </section>
     </main>
-    <%- include('./partials/scoreTable.ejs') %>
   </body>
   <%- include('./partials/script.ejs') %>
 </html>
