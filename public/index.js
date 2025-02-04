@@ -1,3 +1,5 @@
+import { SupabaseClient } from "@supabase/supabase-js";
+
 $(async function () {
   $("#startGame").on("click", async function (e) {
     await gsap
@@ -23,7 +25,8 @@ $(async function () {
   let init;
   socket.on("initial-data", async (data) => {
     if (init === true) return;
-    await initGrid(data);
+    initScoreboard(data?.topScores);
+    await initGrid(data?.data);
     init = true;
     // Handle the initial fruit grid data
   });
@@ -31,9 +34,13 @@ $(async function () {
   // Listen for messages
   socket.on("message", async (data) => {
     if (data?.gameEnded) {
-      window.location = "/completed";
+      // window.location = "/completed";
+      console.log(data);
       // $(".parentContainer").toggleClass("d-none");
       //game ending logic
+    } else if (data?.topScores) {
+      console.log(data);
+      updateScoreboard(data?.topScores);
     } else {
       await updateGrid(data.result);
       updateScore(data.score);
@@ -138,4 +145,48 @@ $(async function () {
       console.warn(error);
     }
   });
+  function updateScoreboard(topScores) {
+    try {
+      topScores.forEach((e, i) => {
+        const rowSelector = `#row-${i + 1}`;
+        const currentScore = parseFloat($(rowSelector).find("td").eq(0).text());
+        if (currentScore < e.score) {
+          // Animate the replacement
+          gsap.to(rowSelector, {
+            scale: 0,
+            duration: 0.5,
+            onComplete: () => {
+              $(rowSelector).replaceWith(`
+                <tr id="row-${i + 1}">
+                  <th scope="row">${i + 1}</th>
+                  <td>${e.score}</td>
+                  <td>${e.username}</td>
+                </tr>
+              `);
+              gsap.fromTo(
+                `#row-${i + 1}`,
+                { scale: 0 },
+                { scale: 1, duration: 0.5 }
+              );
+            },
+          });
+        }
+      });
+    } catch (error) {
+      console.error("Updating scoreboard failed", error);
+    }
+  }
+  function initScoreboard(topScores) {
+    try {
+      [...topScores].forEach((e, i) => {
+        $("#scoreTbody").append(`<tr id="row-${i + 1}">
+          <th scope="row">${i + 1}</th>
+          <td>${e.score}</td>
+          <td>${e.username}</td>
+        </tr>`);
+      });
+    } catch (error) {
+      console.error("updating scoreboard failed", error);
+    }
+  }
 });

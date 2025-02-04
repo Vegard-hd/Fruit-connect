@@ -40,11 +40,14 @@ const fruitService = new FruitService();
 app.use("/public", express.static(path.join(__dirname, "public")));
 app.use(
   "/public/js",
+  express.static(path.join(__dirname, "node_modules/bootstrap/dist/js")),
   express.static(path.join(__dirname, "node_modules/socket.io/client-dist"))
 );
 app.use(
-  "/public/js",
-  express.static(path.join(__dirname, "node_modules/bootstrap/dist/js"))
+  "/public/supabase",
+  express.static(
+    path.join(__dirname, "node_modules/@supabase/supabase-js/dist/module")
+  )
 );
 app.use(
   "/public/css",
@@ -59,11 +62,19 @@ app.use(
 
 app.use("/favicon.ico", express.static(path.join(__dirname, "favicon.ico")));
 
-// Serve index.html for root path
+async function fetchTopScores() {
+  const { data, error } = await supabase
+    .from("completedGames")
+    .select("*")
+    .order("score", { ascending: false })
+    .limit(10);
 
-// app.get("/", (req, res) => {
-//   res.sendFile(path.join(__dirname, "public", "index.html"));
-// });
+  if (error) {
+    console.error("Error fetching top scores:", error);
+  } else {
+    return data;
+  }
+}
 app.use("/", indexRouter);
 app.use("/completed", completedRouter);
 
@@ -90,10 +101,25 @@ io.on("connection", async (socket) => {
       await fruitService.create(userId);
       data = await fruitService.getOne(userId);
     }
-    socket.emit("initial-data", data.fruitgrid);
+    const topScores = await fetchTopScores();
+    socket.emit("initial-data", { data: data.fruitgrid, topScores: topScores });
     let userScore = 0;
     let scoreCount = 0;
     // Handle incoming messages
+
+    supabase
+      .channel("custom-insert-channel")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "completedGames" },
+        async (payload) => {
+          console.log("Change received!", payload);
+          // Optionally, you can re-fetch the top scores after each insert
+          const topScores = await fetchTopScores();
+          socket.emit("message", { topScores: topScores });
+        }
+      )
+      .subscribe();
     socket.on("message", async (message) => {
       try {
         const [result, score] = await calculateFruitsDfs(message, userId);
