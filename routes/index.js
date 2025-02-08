@@ -3,7 +3,7 @@ var router = express.Router();
 
 router.get("/", async (req, res, next) => {
   try {
-    res.render("gameStart");
+    res.render("index");
   } catch (error) {
     next(error);
   }

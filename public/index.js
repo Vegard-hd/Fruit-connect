@@ -13,6 +13,9 @@ $(async function () {
       .then(() => {
         $(".buttonWrapper").remove();
         $("#gameContainer").toggleClass("d-none");
+        $("#gameScoreDisplay").toggleClass("d-none");
+        $("#gameScoreDisplay").toggleClass("d-none");
+        $("#landingPage").toggleClass("d-none");
       })
       .catch((e) => {
         console.warn("failed to start game");

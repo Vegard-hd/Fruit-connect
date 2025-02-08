@@ -2,42 +2,16 @@
 <html lang="en">
   <%- include('./partials/head.ejs') %>
   <body class="container-fluid">
-    <div class="row">
+    <section id="gameScoreDisplay" class="row d-none">
       <h2 class="text-bg-warning pt-3 pb-3 text-center">
         Score is <i class="fs-1" id="gameScore"> 0</i>
       </h2>
-    </div>
-
-    <div class="buttonWrapper">
-      <div class="row row-cols-1">
-        <form>
-          <div class="mb-3 pb-3">
-            <label for="gameUsername" class="form-label fs-4">Username</label>
-            <input
-              type="text"
-              class="form-control"
-              id="gameUsername"
-              aria-describedby="gameUsernameHelp"
-            />
-            <div id="gameUsernameHelp" class="form-text">
-              Give your game a unique name. This name will display on the
-              scoreboard.
-            </div>
-          </div>
-        </form>
-        <button id="startGame" class="button-24">Start game</button>
-        <p class="text p-3 rounded-1">
-          <b class="text-decoration-underline">How to play</b><br />
-          Click fruit to pop them. Connect more than three fruits of the same
-          type to get score. The more fruits you pop the more score you get.
-        </p>
-      </div>
-      <div class="row"></div>
-      <div class="row"></div>
-      <div class="row"></div>
-    </div>
+    </section>
 
     <main class="container-sm gap-0 text-center" style="max-width: 800px">
+      <section id="landingPage" class="col-12">
+        <div class="row"><%- include('./partials/landingPage.ejs') %></div>
+      </section>
       <section id="gameContainer" class="row g-0 d-none">
         <div id="gridWrapper" class="col-md-10 col-12">
           <div id="row1"></div>
