@@ -1,11 +1,10 @@
 import fruitGrid from "../functions/fruitGrid";
 import { Database } from "bun:sqlite";
-import { randomFruit } from "../functions/randomFruit";
 const db = new Database("fruit_crush.db");
 
 /* Create the fruit table if it doesn't exist */
 db.run(
-  "CREATE TABLE IF NOT EXISTS fruit (id TEXT PRIMARY KEY, fruitgrid BLOB NOT NULL)"
+  "CREATE TABLE IF NOT EXISTS fruit (id TEXT PRIMARY KEY, fruitgrid BLOB NOT NULL, moves INTEGER NOT NULL DEFAULT 10)"
 );
 
 var newFruitGrid = new fruitGrid();
@@ -28,7 +27,7 @@ export class FruitService {
 
   async update(fruitGrid, userId) {
     const stmt = this.db.prepare(
-      "UPDATE fruit SET fruitgrid = $1 WHERE id = $2"
+      "UPDATE fruit SET fruitgrid = $1, moves = moves - 1 WHERE id = $2"
     );
 
     return stmt.run(fruitGrid, userId);

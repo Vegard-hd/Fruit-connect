@@ -12,10 +12,10 @@ $(async function () {
       })
       .then(() => {
         $(".buttonWrapper").remove();
-        $("#gameContainer").toggleClass("d-none");
-        $("#gameScoreDisplay").toggleClass("d-none");
-        $("#gameScoreDisplay").toggleClass("d-none");
-        $("#landingPage").toggleClass("d-none");
+        $("#gameContainer").removeClass("d-none");
+        $("#gameScoreDisplay").removeClass("d-none");
+        $("#gameScoreDisplay").removeClass("d-none");
+        $("#landingPage").addClass("d-none");
       })
       .catch((e) => {
         console.warn("failed to start game");
@@ -38,19 +38,45 @@ $(async function () {
   });
 
   // Listen for messages
+
   socket.on("message", async (data) => {
-    if (data?.gameEnded) {
-      // window.location = "/completed";
-      console.log(data);
-      // $(".parentContainer").toggleClass("d-none");
-      //game ending logic
-    } else if (data?.topScores) {
-      console.log(data);
-      updateScoreboard(data?.topScores);
-    } else {
-      await updateGrid(data.result);
-      updateScore(data.score);
+    switch (data) {
+      case data?.topScores:
+        updateScoreboard(data?.topScores);
+        break;
+      case data?.gameEnded:
+        //TODO better gameEnding page/logic
+
+        break;
+      case data?.movesLeft:
+        updateScoreboard(data?.topScores);
+        break;
+      default:
+        await updateGrid(data.result);
+        updateScore(data.score);
+        break;
     }
+    // if (data?.gameEnded) {
+    // } else if (data?.topScores) {
+    //   try {
+    //     updateScoreboard(data?.topScores);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // } else if (data?.movesLeft) {
+    //   try {
+    //     updateScoreboard(data?.topScores);
+    //   } catch (error) {
+    //     console.error(error);
+    //   }
+    // } else {
+    //   try {
+    //     await updateGrid(data.result);
+    //     updateScore(data.score);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // }
   });
 
   // Listen for errors
@@ -184,7 +210,6 @@ $(async function () {
   }
   function initScoreboard(topScores) {
     try {
-      console.log(topScores);
       const scoresArr = [...topScores].flat();
       while (scoresArr.length < 10) {
         scoresArr.push({ score: 0, username: "---" });
@@ -198,5 +223,8 @@ $(async function () {
     } catch (error) {
       console.error("updating scoreboard failed", error);
     }
+  }
+  function updateMovesLeft(movesLeftData) {
+    return $("#movesLeft").val(movesLeftData);
   }
 });

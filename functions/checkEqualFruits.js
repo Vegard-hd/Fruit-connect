@@ -117,6 +117,7 @@ async function removeAndShiftFruits(
 
 export async function calculateFruitsDfs(userData, userId) {
   try {
+    let gameEnded = false;
     // 1) Retrieve or create the stored data
 
     let data = await fruitService.getOne(userId);
@@ -124,7 +125,9 @@ export async function calculateFruitsDfs(userData, userId) {
       await fruitService.create(userId);
       data = await fruitService.getOne(userId);
     }
-
+    if (data.moves <= 0) {
+      gameEnded = true;
+    }
     const gameFruitArr = JSON.parse(data.fruitgrid);
     const userDataToJson = JSON.parse(userData)?.fruit;
     if (!userDataToJson) {
@@ -181,7 +184,7 @@ export async function calculateFruitsDfs(userData, userId) {
     await fruitService.update(jsonFruitGrid, userId); //rewrites entire fruitGameArr
 
     const jsonNewDataAndFruit = JSON.stringify(indexPlusNewFruit); // sends only indexes to remove + newFruits
-    return [jsonNewDataAndFruit, score];
+    return [jsonNewDataAndFruit, score, gameEnded, data?.moves];
   } catch (error) {
     console.warn(error);
   }

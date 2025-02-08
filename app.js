@@ -105,7 +105,6 @@ io.on("connection", async (socket) => {
     const topScores = await fetchTopScores();
     socket.emit("initial-data", { data: data.fruitgrid, topScores: topScores });
     let userScore = 0;
-    let scoreCount = 0;
     // Handle incoming messages
 
     supabase
@@ -115,7 +114,6 @@ io.on("connection", async (socket) => {
         { event: "INSERT", schema: "public", table: "completedGames" },
         async (payload) => {
           console.log("Change received!", payload);
-          // Optionally, you can re-fetch the top scores after each insert
           const topScores = await fetchTopScores();
           socket.emit("message", { topScores: topScores });
         }
@@ -124,13 +122,13 @@ io.on("connection", async (socket) => {
     socket.on("message", async (message) => {
       try {
         if (message.username || message.username === "") {
-          console.log(message);
           username = message.username ? message.username : userId;
-          console.log(username);
         } else {
-          const [result, score] = await calculateFruitsDfs(message, userId);
-
-          if (scoreCount >= 10) {
+          const [result, score, gameEnded, movesLeft] =
+            await calculateFruitsDfs(message, userId);
+          console.log(gameEnded, movesLeft);
+          if (gameEnded === true) {
+            //gameEnded
             const { data, error } = await supabase
               .from("completedGames")
               .insert([
@@ -147,17 +145,22 @@ io.on("connection", async (socket) => {
                 "Something went wrong with writing to the database"
               );
             socket.emit("message", { gameEnded: true, data: data });
-            userScore = 0;
-            scoreCount = 0;
-            //write to DB
-            //end game
-            //reset userScore and scoreCount
-            //new ID
+            //redirect
           }
+
+          userScore = 0;
+          scoreCount = 0;
+          //write to DB
+          //end game
+          //reset userScore and scoreCount
+          //new ID
           userScore += score;
-          scoreCount++;
           console.log("userScore is ...!", userScore);
-          socket.emit("message", { result: result, score: userScore });
+          socket.emit("message", {
+            result: result,
+            score: userScore,
+            movesLeft: movesLeft,
+          });
         }
       } catch (err) {
         socket.emit("error", `Something went wrong, error: ${err}`);

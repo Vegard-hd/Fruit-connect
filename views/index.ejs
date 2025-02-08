@@ -4,11 +4,23 @@
   <body class="container-fluid">
     <section id="gameScoreDisplay" class="row d-none">
       <h2 class="text-bg-warning pt-3 pb-3 text-center">
-        Score is <i class="fs-1" id="gameScore"> 0</i>
+        Score is:
+        <i class="fs-1 text-success text-decoration-underline" id="gameScore">
+          0</i
+        >
+        <div>&nbsp;</div>
+        Moves left:
+        <i class="fs-1 text-danger text-decoration-underline" id="movesLeft">
+          10</i
+        >
       </h2>
     </section>
-
-    <main class="container-sm gap-0 text-center" style="max-width: 800px">
+    <header>
+      <h1 class="text-center fs-1 mt-5 text-danger text-decoration-underline">
+        Fruit-connect
+      </h1>
+    </header>
+    <main class="container-fluid gap-0 text-center" style="max-width: 800px">
       <section id="landingPage" class="col-12">
         <div class="row"><%- include('./partials/landingPage.ejs') %></div>
       </section>

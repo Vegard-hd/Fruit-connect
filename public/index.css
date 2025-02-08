@@ -65,13 +65,12 @@ img {
 
 /* Your existing #gridWrapper styles */
 #gridWrapper {
-  border: 4px solid black;
+  border: calc(0.25vw + 1px) solid black;
 
   display: grid;
   grid-template-columns: repeat(12, [col-start] 1fr);
   /* gap: 20px; */
   z-index: 99;
-  margin: -3px;
   align-items: end;
 }
 /* .fruitBox {
