@@ -81,8 +81,9 @@ app.use("/completed", completedRouter);
 // Socket.IO connection handling
 io.on("connection", async (socket) => {
   let userId;
-  // called during the handshake
+  let username; // user submitted username
   try {
+    // called during the handshake
     const headers = socket.handshake.headers?.cookie ?? null;
     if (headers === null) {
       userId = randomUUID();
@@ -122,30 +123,42 @@ io.on("connection", async (socket) => {
       .subscribe();
     socket.on("message", async (message) => {
       try {
-        const [result, score] = await calculateFruitsDfs(message, userId);
+        if (message.username || message.username === "") {
+          console.log(message);
+          username = message.username ? message.username : userId;
+          console.log(username);
+        } else {
+          const [result, score] = await calculateFruitsDfs(message, userId);
 
-        if (scoreCount >= 10) {
-          const { data, error } = await supabase
-            .from("completedGames")
-            .insert([{ score: userScore, gameId: userId, username: "admin" }])
-            .select();
+          if (scoreCount >= 10) {
+            const { data, error } = await supabase
+              .from("completedGames")
+              .insert([
+                {
+                  score: userScore,
+                  gameId: userId,
+                  username: username ?? userId,
+                },
+              ])
+              .select();
 
-          if (error)
-            throw new Error(
-              "Something went wrong with writing to the database"
-            );
-          socket.emit("message", { gameEnded: true, data: data });
-          userScore = 0;
-          scoreCount = 0;
-          //write to DB
-          //end game
-          //reset userScore and scoreCount
-          //new ID
+            if (error)
+              throw new Error(
+                "Something went wrong with writing to the database"
+              );
+            socket.emit("message", { gameEnded: true, data: data });
+            userScore = 0;
+            scoreCount = 0;
+            //write to DB
+            //end game
+            //reset userScore and scoreCount
+            //new ID
+          }
+          userScore += score;
+          scoreCount++;
+          console.log("userScore is ...!", userScore);
+          socket.emit("message", { result: result, score: userScore });
         }
-        userScore += score;
-        scoreCount++;
-        console.log("userScore is ...!", userScore);
-        socket.emit("message", { result: result, score: userScore });
       } catch (err) {
         socket.emit("error", `Something went wrong, error: ${err}`);
       }

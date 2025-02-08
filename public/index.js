@@ -1,5 +1,9 @@
 $(async function () {
+  let username;
   $("#startGame").on("click", async function (e) {
+    username = $("#gameUsername").val();
+    sendMessage({ username: username });
+
     await gsap
       .to(".buttonWrapper", {
         scale: 1.1,
@@ -26,6 +30,7 @@ $(async function () {
     initScoreboard(data?.topScores);
     await initGrid(data?.data);
     init = true;
+
     // Handle the initial fruit grid data
   });
 
@@ -157,8 +162,8 @@ $(async function () {
               $(rowSelector).replaceWith(`
                 <tr id="row-${i + 1}">
                   <th scope="row">${i + 1}</th>
-                  <td>${e.score}</td>
                   <td>${e.username}</td>
+                  <td>${e.score}</td>
                 </tr>
               `);
               gsap.fromTo(
@@ -176,12 +181,16 @@ $(async function () {
   }
   function initScoreboard(topScores) {
     try {
-      [...topScores].forEach((e, i) => {
-        $("#scoreTbody").append(`<tr id="row-${i + 1}">
+      console.log(topScores);
+      const scoresArr = [...topScores].flat();
+      while (scoresArr.length < 10) {
+        scoresArr.push({ score: 0, username: "---" });
+      }
+      scoresArr.forEach((e, i) => {
+        $(`#row-${i + 1}`).append(`
           <th scope="row">${i + 1}</th>
-          <td>${e.score}</td>
           <td>${e.username}</td>
-        </tr>`);
+          <td>${e.score}</td>`);
       });
     } catch (error) {
       console.error("updating scoreboard failed", error);

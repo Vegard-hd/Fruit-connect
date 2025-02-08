@@ -10,6 +10,21 @@
 
     <div class="buttonWrapper">
       <div class="row row-cols-1">
+        <form>
+          <div class="mb-3 pb-3">
+            <label for="gameUsername" class="form-label fs-4">Username</label>
+            <input
+              type="text"
+              class="form-control"
+              id="gameUsername"
+              aria-describedby="gameUsernameHelp"
+            />
+            <div id="gameUsernameHelp" class="form-text">
+              Give your game a unique name. This name will display on the
+              scoreboard.
+            </div>
+          </div>
+        </form>
         <button id="startGame" class="button-24">Start game</button>
         <p class="text p-3 rounded-1">
           <b class="text-decoration-underline">How to play</b><br />
