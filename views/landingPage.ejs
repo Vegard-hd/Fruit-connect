@@ -40,9 +40,19 @@
   </body>
   <script>
     const button = document.getElementById("startGame");
+    const username = document.getElementById("gameUsername")
+      ? document.getElementById("gameUsername")
+      : null;
     button.addEventListener("click", (e) => {
-      window.location = "/creategame";
-      console.log("click");
+      if (username?.value) {
+        console.log(username.value);
+        jsonUser = JSON.stringify(username);
+        console.log(jsonUser);
+
+        window.location = `/creategame?username=${username.value}`;
+      } else {
+        // window.location = `/creategame`;
+      }
     });
   </script>
 </html>

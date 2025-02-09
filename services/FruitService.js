@@ -4,7 +4,7 @@ const db = new Database("fruit_crush.db");
 
 /* Create the fruit table if it doesn't exist */
 db.run(
-  "CREATE TABLE IF NOT EXISTS fruit (id TEXT PRIMARY KEY, fruitgrid BLOB NOT NULL, moves INTEGER NOT NULL DEFAULT 10)"
+  "CREATE TABLE IF NOT EXISTS fruit (id TEXT PRIMARY KEY, fruitgrid BLOB NOT NULL, moves INTEGER NOT NULL DEFAULT 10, username TEXT)"
 );
 
 var newFruitGrid = new fruitGrid();
@@ -23,6 +23,17 @@ export class FruitService {
     );
     console.log(stmt);
     return stmt.get(gameId, fruitgrid);
+  }
+
+  async createWithUser(gameId, username) {
+    newFruitGrid.initGrid();
+    const fruitgrid = newFruitGrid.stringifyFruits();
+
+    const stmt = this.db.prepare(
+      "INSERT INTO fruit (id, fruitgrid, username) VALUES ($1, $2, $3)"
+    );
+    console.log(stmt);
+    return stmt.get(gameId, fruitgrid, username);
   }
 
   async update(fruitGrid, userId) {
