@@ -14,7 +14,7 @@ export class FruitService {
     this.db = db;
   }
 
-  async create(userid) {
+  async create(gameId) {
     newFruitGrid.initGrid();
     const fruitgrid = newFruitGrid.stringifyFruits();
 
@@ -22,7 +22,7 @@ export class FruitService {
       "INSERT INTO fruit (id, fruitgrid) VALUES ($1, $2)"
     );
     console.log(stmt);
-    return stmt.get(userid, fruitgrid);
+    return stmt.get(gameId, fruitgrid);
   }
 
   async update(fruitGrid, userId) {

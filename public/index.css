@@ -5,7 +5,10 @@ img {
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
-  width: clamp(12px, 6vw, 45px);
+  width: calc(
+    (1250% / 12) + 5px
+  ); /* Adjust the 10px for spacing if necessary */
+  height: auto; /* Maintain aspect ratio */
 }
 
 /* Assuming this is the parent container of #gridWrapper */

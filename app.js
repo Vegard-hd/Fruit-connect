@@ -20,7 +20,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 var completedRouter = require("./routes/completed");
-var indexRouter = require("./routes/index");
+var indexRouter = require("./routes/index").default;
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -75,8 +75,8 @@ async function fetchTopScores() {
     return data;
   }
 }
-app.use("/", indexRouter);
 app.use("/completed", completedRouter);
+app.use("/", indexRouter);
 
 // Socket.IO connection handling
 io.on("connection", async (socket) => {
@@ -103,6 +103,7 @@ io.on("connection", async (socket) => {
       data = await fruitService.getOne(userId);
     }
     const topScores = await fetchTopScores();
+    console.log("websocket connected");
     socket.emit("initial-data", { data: data.fruitgrid, topScores: topScores });
     let userScore = 0;
     // Handle incoming messages

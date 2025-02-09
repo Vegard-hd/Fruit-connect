@@ -2,7 +2,7 @@
 <html lang="en">
   <%- include('./partials/head.ejs') %>
   <body class="container-fluid">
-    <section id="gameScoreDisplay" class="row d-none">
+    <section id="gameScoreDisplay" class="row">
       <h2 class="text-bg-warning pt-3 pb-3 text-center">
         Score is:
         <i class="fs-1 text-success text-decoration-underline" id="gameScore">
@@ -21,11 +21,11 @@
       </h1>
     </header>
     <main class="container-fluid gap-0 text-center" style="max-width: 800px">
-      <section id="landingPage" class="col-12">
+      <!-- <section id="landingPage" class="col-12">
         <div class="row"><%- include('./partials/landingPage.ejs') %></div>
-      </section>
-      <section id="gameContainer" class="row g-0 d-none">
-        <div id="gridWrapper" class="col-md-10 col-12">
+      </section> -->
+      <section id="gameContainer" class="row g-0">
+        <div id="gridWrapper" class="col-md-8 col-12">
           <div id="row1"></div>
           <div id="row2"></div>
           <div id="row3"></div>
@@ -39,7 +39,7 @@
           <div id="row11"></div>
           <div id="row12"></div>
         </div>
-        <div class="col-md-2 col-12">
+        <div class="col-md-4 col-12">
           <%- include('./partials/scoreTable.ejs') %>
         </div>
       </section>

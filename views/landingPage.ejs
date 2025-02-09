@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./partials/head.ejs') %>
+  <body>
+    <main class="container-fluid gap-0 text-center" style="max-width: 800px">
+      <section id="landingPage" class="col-12">
+        <div class="row">
+          <section class="container-fluid">
+            <button
+              id="startGame"
+              class="button-24 mt-5 text-center"
+              onclick=""
+            >
+              Start game
+            </button>
+            <p class="text p-3 rounded-1">
+              <b class="text-decoration-underline">How to Play</b><br />
+              Your objective is to achieve the highest score possible
+              <b>in 10 moves</b>. Click on the fruits to pop them. Connect three
+              or more fruits of the same type to earn points. The more fruits
+              you pop in one move, the higher your score.
+            </p>
+            <div class="mb-3 pb-3">
+              <label for="gameUsername" class="form-label fs-4">Username</label>
+              <input
+                type="text"
+                class="form-control"
+                id="gameUsername"
+                aria-describedby="gameUsernameHelp"
+              />
+              <div id="gameUsernameHelp" class="form-text">
+                Give your game a unique name. This name will display on the
+                scoreboard.
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+    </main>
+  </body>
+  <script>
+    const button = document.getElementById("startGame");
+    button.addEventListener("click", (e) => {
+      window.location = "/creategame";
+      console.log("click");
+    });
+  </script>
+</html>
