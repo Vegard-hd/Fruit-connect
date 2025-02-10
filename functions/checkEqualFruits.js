@@ -125,7 +125,7 @@ export async function calculateFruitsDfs(userData, userId) {
       await fruitService.create(userId);
       data = await fruitService.getOne(userId);
     }
-    if (data.moves <= 0) {
+    if (data.moves < 0) {
       gameEnded = true;
     }
     const gameFruitArr = JSON.parse(data.fruitgrid);

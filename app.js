@@ -80,29 +80,19 @@ app.use("/", indexRouter);
 
 // Socket.IO connection handling
 io.on("connection", async (socket) => {
-  let userId;
-  let username; // user submitted username
   try {
-    // called during the handshake
-    const headers = socket.handshake.headers?.cookie ?? null;
-    if (headers === null) {
-      userId = randomUUID();
-      io.engine.on("initial_headers", (headers, request) => {
-        headers["set-cookie"] = serialize("uid", userId, {
-          sameSite: "strict",
-        });
-      });
-    } else {
-      userId = parse(headers).uid;
-    }
+    const newGameId = socket.request.headers.referer.split("?=").at(-1);
 
-    // Initial data fetch and send
-    let data = await fruitService.getOne(userId);
-    if (!data) {
-      await fruitService.create(userId);
-      data = await fruitService.getOne(userId);
+    if (!newGameId) {
+      throw new Error("Failed to get game id");
     }
-    const topScores = await fetchTopScores();
+    const [data, topScores] = await Promise.all([
+      await fruitService.getOne(newGameId),
+      await fetchTopScores(),
+    ]).catch((e) => {
+      console.warn(e);
+      throw new Error("Failed to retrieve data");
+    });
     console.log("websocket connected");
     socket.emit("initial-data", { data: data.fruitgrid, topScores: topScores });
     let userScore = 0;
@@ -114,7 +104,6 @@ io.on("connection", async (socket) => {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "completedGames" },
         async (payload) => {
-          console.log("Change received!", payload);
           const topScores = await fetchTopScores();
           socket.emit("message", { topScores: topScores });
         }
@@ -122,39 +111,32 @@ io.on("connection", async (socket) => {
       .subscribe();
     socket.on("message", async (message) => {
       try {
-        if (message.username || message.username === "") {
-          username = message.username ? message.username : userId;
+        const [result, score, gameEnded, movesLeft] = await calculateFruitsDfs(
+          message,
+          newGameId
+        );
+        console.log(gameEnded, movesLeft);
+        if (gameEnded === true) {
+          //gameEnded
+          console.log("inside gameEnded logic....", gameEnded);
+          const { supabaseData, error } = await supabase
+            .from("completedGames")
+            .insert([
+              {
+                score: userScore,
+                gameId: newGameId,
+                username: data?.username ?? newGameId,
+              },
+            ])
+            .select();
+
+          if (error)
+            throw new Error(
+              "Something went wrong with writing to the database"
+            );
+          socket.emit("message", { gameEnded: true, data: supabaseData });
+          socket.disconnect(true);
         } else {
-          const [result, score, gameEnded, movesLeft] =
-            await calculateFruitsDfs(message, userId);
-          console.log(gameEnded, movesLeft);
-          if (gameEnded === true) {
-            //gameEnded
-            const { data, error } = await supabase
-              .from("completedGames")
-              .insert([
-                {
-                  score: userScore,
-                  gameId: userId,
-                  username: username ?? userId,
-                },
-              ])
-              .select();
-
-            if (error)
-              throw new Error(
-                "Something went wrong with writing to the database"
-              );
-            socket.emit("message", { gameEnded: true, data: data });
-            //redirect
-          }
-
-          userScore = 0;
-          scoreCount = 0;
-          //write to DB
-          //end game
-          //reset userScore and scoreCount
-          //new ID
           userScore += score;
           console.log("userScore is ...!", userScore);
           socket.emit("message", {

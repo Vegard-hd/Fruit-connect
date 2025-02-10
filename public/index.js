@@ -40,43 +40,23 @@ $(async function () {
   // Listen for messages
 
   socket.on("message", async (data) => {
-    switch (data) {
-      case data?.topScores:
-        updateScoreboard(data?.topScores);
-        break;
-      case data?.gameEnded:
-        //TODO better gameEnding page/logic
-
-        break;
-      case data?.movesLeft:
-        updateScoreboard(data?.topScores);
-        break;
-      default:
-        await updateGrid(data.result);
-        updateScore(data.score);
-        break;
+    console.log(data);
+    if (data?.topScores) {
+      updateScoreboard(data?.topScores);
     }
-    // if (data?.gameEnded) {
-    // } else if (data?.topScores) {
-    //   try {
-    //     updateScoreboard(data?.topScores);
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // } else if (data?.movesLeft) {
-    //   try {
-    //     updateScoreboard(data?.topScores);
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // } else {
-    //   try {
-    //     await updateGrid(data.result);
-    //     updateScore(data.score);
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // }
+    if (data?.gameEnded) {
+      window.location = "/completed";
+      //TODO better gameEnding page/logic
+    }
+    if (data?.movesLeft) {
+      updateMovesLeft(data?.movesLeft);
+    }
+    if (data?.score && data?.result) {
+      updateScore(data.score);
+    }
+    if (data?.result) {
+      await updateGrid(data?.result);
+    }
   });
 
   // Listen for errors
@@ -225,6 +205,7 @@ $(async function () {
     }
   }
   function updateMovesLeft(movesLeftData) {
-    return $("#movesLeft").val(movesLeftData);
+    console.log("data in moves left is  ", movesLeftData);
+    return $("#movesLeft").text(movesLeftData);
   }
 });

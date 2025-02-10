@@ -16,7 +16,7 @@ router.get("/creategame", async (req, res, next) => {
   console.log("username is ...", username);
   const gameId = randomUUID();
   fruitService.createWithUser(gameId, username); //create game with this id in the DB
-  res.redirect(`/game=${gameId}`);
+  res.redirect(`/game?=${gameId}`);
 });
 
 //actual websocket game
