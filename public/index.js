@@ -47,7 +47,8 @@ $(async function () {
     }
     if (data?.gameEnded) {
       socket.disconnect();
-      window.location.replace(`/completed${window.location.search}`);
+      const gameId = (window.location + "").split("?=").at(-1);
+      window.location.replace(`/completed?game=${gameId}`);
       //TODO better gameEnding page/logic
     }
     if (data?.movesLeft) {

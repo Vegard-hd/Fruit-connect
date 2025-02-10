@@ -36,12 +36,20 @@ export class FruitService {
     return stmt.get(gameId, fruitgrid, username);
   }
 
-  async update(fruitGrid, userId) {
+  async update(fruitGrid, gameId) {
     const stmt = this.db.prepare(
       "UPDATE fruit SET fruitgrid = $1, moves = moves - 1 WHERE id = $2"
     );
 
-    return stmt.run(fruitGrid, userId);
+    return stmt.run(fruitGrid, gameId);
+  }
+
+  async setGameCompleted(gameId) {
+    const stmt = this.db.prepare(
+      "UPDATE fruit SET completed = 1 WHERE id = $1"
+    );
+
+    return stmt.run(gameId);
   }
 
   async getAll() {

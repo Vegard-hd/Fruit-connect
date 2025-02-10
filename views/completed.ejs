@@ -5,7 +5,9 @@
   <body>
     <main>
       <div class="text-center">
-        <button class="m-3 btn btn-lg btn-primary">Play again!</button>
+        <button id="playagain" class="m-3 btn btn-lg btn-primary">
+          Play again!
+        </button>
       </div>
       <section class="container-md text-center">
         <h3 class="p-3 fs-2 text-decoration-underline">This game</h3>
@@ -59,4 +61,10 @@
       </section>
     </main>
   </body>
+  <script>
+    const btn = document.getElementById("playagain");
+    btn.addEventListener("click", (e) => {
+      location.replace("/");
+    });
+  </script>
 </html>

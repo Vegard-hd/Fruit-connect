@@ -12,6 +12,7 @@ router.get("/completed", async (req, res, next) => {
   try {
     console.log("req params in completed router is .... ", req.query);
     const { game } = req.query;
+    console.log(game);
     const [gameData, top20] = await Promise.all([
       await supabase.from("completedGames").select("*").ilike("gameId", game),
       await supabase
@@ -22,7 +23,7 @@ router.get("/completed", async (req, res, next) => {
     ]).catch((e) => {
       throw new Error("Failed to get data from the supabase database");
     });
-    console.log(top20.data);
+    console.log(top20.data, gameData);
     res.render("completed", { gameData: gameData?.data[0], top20: top20 });
   } catch (error) {
     next(error);
