@@ -4,7 +4,7 @@ const db = new Database("fruit_crush.db");
 
 /* Create the fruit table if it doesn't exist */
 db.run(
-  "CREATE TABLE IF NOT EXISTS fruit (id TEXT PRIMARY KEY, fruitgrid BLOB NOT NULL, moves INTEGER NOT NULL DEFAULT 10, username TEXT)"
+  "CREATE TABLE IF NOT EXISTS fruit (id TEXT PRIMARY KEY, fruitgrid BLOB NOT NULL, moves INTEGER NOT NULL DEFAULT 10, username TEXT, completed BOOLEAN default 0 )"
 );
 
 var newFruitGrid = new fruitGrid();

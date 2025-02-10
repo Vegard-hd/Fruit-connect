@@ -41,11 +41,13 @@ $(async function () {
 
   socket.on("message", async (data) => {
     console.log(data);
+    console.log();
     if (data?.topScores) {
       updateScoreboard(data?.topScores);
     }
     if (data?.gameEnded) {
-      window.location = "/completed";
+      socket.disconnect();
+      window.location.replace(`/completed${window.location.search}`);
       //TODO better gameEnding page/logic
     }
     if (data?.movesLeft) {

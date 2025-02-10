@@ -8,7 +8,6 @@ import path from "path";
 import { fileURLToPath } from "url";
 import morgan from "morgan";
 import compression from "compression";
-import { serialize, parse } from "cookie";
 import supabase from "./supabase";
 const { randomUUID } = new ShortUniqueId({
   length: 10,
@@ -19,7 +18,6 @@ const __dirname = path.dirname(__filename);
 // Initialize Express app and services
 const app = express();
 
-var completedRouter = require("./routes/completed");
 var indexRouter = require("./routes/index").default;
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -75,14 +73,21 @@ async function fetchTopScores() {
     return data;
   }
 }
-app.use("/completed", completedRouter);
+// app.use("/completed", completedRouter);
 app.use("/", indexRouter);
 
 // Socket.IO connection handling
 io.on("connection", async (socket) => {
   try {
+    console.log(
+      "referer is .... ",
+      socket.request.headers.referer.split("/").at(-1)
+    );
+    if (socket.request.headers.referer.split("/").at(-1) === "completed") {
+      return;
+    }
     const newGameId = socket.request.headers.referer.split("?=").at(-1);
-
+    console.log("gameId in app is .... ", newGameId);
     if (!newGameId) {
       throw new Error("Failed to get game id");
     }

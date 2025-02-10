@@ -1,11 +1,33 @@
 import { Router } from "express";
 var router = Router();
+import supabase from "../supabase";
 import ShortUniqueId from "short-unique-id";
 const { randomUUID } = new ShortUniqueId({
   length: 12,
 });
 import { FruitService } from "../services/FruitService";
 const fruitService = new FruitService();
+
+router.get("/completed", async (req, res, next) => {
+  try {
+    console.log("req params in completed router is .... ", req.query);
+    const { game } = req.query;
+    const [gameData, top20] = await Promise.all([
+      await supabase.from("completedGames").select("*").ilike("gameId", game),
+      await supabase
+        .from("completedGames")
+        .select("*")
+        .order("score", { ascending: false })
+        .limit(20),
+    ]).catch((e) => {
+      throw new Error("Failed to get data from the supabase database");
+    });
+    console.log(top20.data);
+    res.render("completed", { gameData: gameData?.data[0], top20: top20 });
+  } catch (error) {
+    next(error);
+  }
+});
 
 //redirect endpoint generating a new id
 router.get("/creategame", async (req, res, next) => {
