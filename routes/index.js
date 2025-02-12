@@ -6,13 +6,34 @@ const { randomUUID } = new ShortUniqueId({
   length: 12,
 });
 import { FruitService } from "../services/FruitService";
+import { CompletedGamesService } from "../services/CompletedGamesService";
 const fruitService = new FruitService();
+const completedService = new CompletedGamesService();
+
+async function checkGameExists(gameId) {
+  const data = await completedService.getOne(gameId);
+  console.log(data);
+  if (data && data.completed === 1) return true;
+  return false;
+}
+
+function convertDateString(dateString) {
+  const date = new Date(dateString);
+  const options = {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  };
+  return date.toLocaleDateString("en-DE", options);
+}
 
 router.get("/completed", async (req, res, next) => {
   try {
-    console.log("req params in completed router is .... ", req.query);
     const { game } = req.query;
-    console.log(game);
+    if (!game) next(error);
     const [gameData, top20] = await Promise.all([
       await supabase.from("completedGames").select("*").ilike("gameId", game),
       await supabase
@@ -23,8 +44,12 @@ router.get("/completed", async (req, res, next) => {
     ]).catch((e) => {
       throw new Error("Failed to get data from the supabase database");
     });
-    console.log(top20.data, gameData);
-    res.render("completed", { gameData: gameData?.data[0], top20: top20 });
+
+    res.render("completed", {
+      gameData: gameData?.data[0],
+      top20: top20,
+      convertDateString: convertDateString,
+    });
   } catch (error) {
     next(error);
   }
@@ -36,20 +61,34 @@ router.get("/creategame", async (req, res, next) => {
   if (req.query?.username) {
     username = req.query?.username;
   }
-  console.log("username is ...", username);
   const gameId = randomUUID();
-  fruitService.createWithUser(gameId, username); //create game with this id in the DB
-  res.redirect(`/game?=${gameId}`);
+  await fruitService.createWithUser(gameId, username); //create game with this id in the DB
+  res.redirect(`/game?id=${gameId}`);
 });
 
 //actual websocket game
-router.get("/:game", async (req, res, next) => {
-  const { game } = req.params;
-  const gameId = game.split("=").at(-1);
-  if (gameId) {
-    return res.render("index", { gameId: gameId });
-  } else {
-    next(error);
+router.get("/game", async (req, res, next) => {
+  const { id } = req.query;
+  try {
+    // const gameId
+    if (id) {
+      console.log(id);
+      const gameData = await fruitService.getOne(id);
+      if (!gameData) {
+        const gameCompleted = await completedService.getOne(id);
+        return res.redirect(`/completed?game=${gameCompleted.id}`);
+        // console.log(gameCompleted);
+      }
+      return res.render("index", {
+        gameId: id,
+        movesLeft: gameData?.moves,
+      });
+    } else {
+      res.redirect("/");
+    }
+  } catch (error) {
+    console.warn(error);
+    res.redirect("/");
   }
 });
 

@@ -1,8 +1,6 @@
 import { FruitService } from "../services/FruitService";
 import { randomFruit } from "./randomFruit";
 const fruitService = new FruitService();
-const ScoreService = require("../services/ScoreService");
-const scoreService = new ScoreService();
 export /**
  * Finds all connected fruits matching the fruit at 'startIndex'
  * in a grid of 'height' rows and 'width' columns.
@@ -69,20 +67,7 @@ async function findConnectedFruits(
   });
   return await promise;
 }
-export /**
- * Removes all fruits from the given indices, shifting each fruit in that row
- * one position downward (toward higher indices), and inserts a new fruit at
- * the start of the row.
- *
- * @param {Array} gameFruitArr - The 1D array of fruit objects.
- * @param {Set|Array<number>} indicesToRemove - The set or array of indices to remove.
- * @param {Function} randomFruit - Function that returns a new fruit (e.g. { fruit: 'apple', id: 123 }).
- */
-async function removeAndShiftFruits(
-  gameFruitArr,
-  indicesToRemove,
-  randomFruit
-) {
+export async function removeAndShiftFruits(gameFruitArr, indicesToRemove) {
   const promise = await new Promise((resolve, reject) => {
     const width = 10; // Number of columns in each row
 
@@ -117,17 +102,9 @@ async function removeAndShiftFruits(
 
 export async function calculateFruitsDfs(userData, userId) {
   try {
-    let gameEnded = false;
-    // 1) Retrieve or create the stored data
-
     let data = await fruitService.getOne(userId);
-    if (!data) {
-      await fruitService.create(userId);
-      data = await fruitService.getOne(userId);
-    }
-    if (data.moves < 0) {
-      gameEnded = true;
-    }
+    if (!data) throw new Error("Failed to retrieve data ");
+
     const gameFruitArr = JSON.parse(data.fruitgrid);
     const userDataToJson = JSON.parse(userData)?.fruit;
     if (!userDataToJson) {
@@ -137,12 +114,10 @@ export async function calculateFruitsDfs(userData, userId) {
       (element) => element?.id === userDataToJson
     );
 
-    // If the fruit isn't found, handle error
+    //throws if the fruit id user provides is not in the fruitgrid
     if (clickedIndex === -1) {
       throw new Error("No fruit id found in the request");
     }
-
-    //handle extra check to match backend fruit type with userinput
 
     const connectedIndices = await findConnectedFruits(
       gameFruitArr,
@@ -151,6 +126,7 @@ export async function calculateFruitsDfs(userData, userId) {
       12
     );
 
+    //updates score if three or more fruits are next to eachother
     let score = 0;
     if (connectedIndices.size >= 3) {
       score = connectedIndices?.size
@@ -158,15 +134,6 @@ export async function calculateFruitsDfs(userData, userId) {
         : 1;
       score = Number.parseInt(score, 10);
     }
-
-    // const getScore = async () => {
-    //   let score = await scoreService.getOne(1);
-    //   if (!score) {
-    //     await scoreService.create();
-    //     score = scoreService.getOne(1);
-    //   }
-    //   return score;
-    // };
 
     const indexPlusNewFruit = [...connectedIndices].map((element) => {
       return {
@@ -180,11 +147,20 @@ export async function calculateFruitsDfs(userData, userId) {
       indexPlusNewFruit,
       randomFruit
     );
+
     const jsonFruitGrid = JSON.stringify(finishedArr);
-    await fruitService.update(jsonFruitGrid, userId); //rewrites entire fruitGameArr
+    console.time("sqliteq1");
+    await Promise.all([
+      await fruitService.update(jsonFruitGrid, userId, score),
+      await fruitService.updateScore(score, userId),
+      await fruitService.decrementMoves(userId),
+    ]).catch((e) => {
+      throw new Error("Failed to write to the database");
+    });
+    console.timeEnd("sqliteq1");
 
     const jsonNewDataAndFruit = JSON.stringify(indexPlusNewFruit); // sends only indexes to remove + newFruits
-    return [jsonNewDataAndFruit, score, gameEnded, data?.moves];
+    return jsonNewDataAndFruit;
   } catch (error) {
     console.warn(error);
   }

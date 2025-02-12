@@ -29,6 +29,9 @@
                 aria-describedby="gameUsernameHelp"
               />
               <div id="gameUsernameHelp" class="form-text">
+                <i>
+                  <b>Optional:</b>
+                </i>
                 Give your game a unique name. This name will display on the
                 scoreboard.
               </div>
@@ -45,13 +48,10 @@
       : null;
     button.addEventListener("click", (e) => {
       if (username?.value) {
-        console.log(username.value);
         jsonUser = JSON.stringify(username);
-        console.log(jsonUser);
-
         window.location = `/creategame?username=${username.value}`;
       } else {
-        // window.location = `/creategame`;
+        window.location = `/creategame`;
       }
     });
   </script>

@@ -1,24 +1,22 @@
 import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import ShortUniqueId from "short-unique-id";
 import { FruitService } from "./services/FruitService";
+import { CompletedGamesService } from "./services/CompletedGamesService";
 import { calculateFruitsDfs } from "./functions/checkEqualFruits";
 import path from "path";
 import { fileURLToPath } from "url";
 import morgan from "morgan";
 import compression from "compression";
 import supabase from "./supabase";
-const { randomUUID } = new ShortUniqueId({
-  length: 10,
-});
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Initialize Express app and services
+import indexRouter from "./routes/index";
+// import { router } from "./routes/index";
 const app = express();
 
-var indexRouter = require("./routes/index").default;
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -31,7 +29,7 @@ const io = new Server(server, {
   cookie: false,
 });
 const fruitService = new FruitService();
-
+const completedService = new CompletedGamesService();
 // Get the directory name using ES modules
 
 // Serve static files
@@ -73,21 +71,17 @@ async function fetchTopScores() {
     return data;
   }
 }
-// app.use("/completed", completedRouter);
+
 app.use("/", indexRouter);
 
-// Socket.IO connection handling
 io.on("connection", async (socket) => {
+  let gameEnded;
   try {
-    console.log(
-      "referer is .... ",
-      socket.request.headers.referer.split("/").at(-1)
-    );
     if (socket.request.headers.referer.split("/").at(-1) === "completed") {
       return;
     }
-    const newGameId = socket.request.headers.referer.split("?=").at(-1);
-    console.log("gameId in app is .... ", newGameId);
+    const newGameId = socket.request.headers.referer.split("?id=").at(-1);
+
     if (!newGameId) {
       throw new Error("Failed to get game id");
     }
@@ -98,17 +92,23 @@ io.on("connection", async (socket) => {
       console.warn(e);
       throw new Error("Failed to retrieve data");
     });
-    console.log("websocket connected");
-    socket.emit("initial-data", { data: data.fruitgrid, topScores: topScores });
-    let userScore = 0;
-    // Handle incoming messages
-
+    if (data?.completed === 1) {
+      return; //game is completed
+    }
+    socket.emit("initial-data", {
+      data: data?.fruitgrid,
+      topScores: topScores,
+      movesLeft: data?.moves,
+      score: data?.gamescore,
+    });
+    //supabase subscripe method
     supabase
       .channel("custom-insert-channel")
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "completedGames" },
         async (payload) => {
+          console.log(payload);
           const topScores = await fetchTopScores();
           socket.emit("message", { topScores: topScores });
         }
@@ -116,49 +116,60 @@ io.on("connection", async (socket) => {
       .subscribe();
     socket.on("message", async (message) => {
       try {
-        const [result, score, gameEnded, movesLeft] = await calculateFruitsDfs(
-          message,
-          newGameId
-        );
-        console.log(gameEnded, movesLeft);
+        const result = await calculateFruitsDfs(message, newGameId);
+        const updatedGameData = await fruitService.getOne(newGameId);
+        if (updatedGameData.moves <= 0) {
+          gameEnded = true;
+        }
+        socket.emit("message", {
+          result: result,
+          score: updatedGameData.gamescore,
+          movesLeft: updatedGameData.moves,
+        });
         if (gameEnded === true) {
           //gameEnded
-          console.log("inside gameEnded logic....", gameEnded);
-          const { supabaseData, error } = await supabase
-            .from("completedGames")
-            .insert([
-              {
-                score: userScore,
-                gameId: newGameId,
-                username: data?.username ?? newGameId,
-              },
-            ])
-            .select();
-
-          if (error)
-            throw new Error(
-              "Something went wrong with writing to the database"
-            );
-          socket.emit("message", { gameEnded: true, data: supabaseData });
-          socket.disconnect(true);
-        } else {
-          userScore += score;
-          console.log("userScore is ...!", userScore);
-          socket.emit("message", {
-            result: result,
-            score: userScore,
-            movesLeft: movesLeft,
-          });
+          const insertGameEndedData = async () => {
+            return await supabase
+              .from("completedGames")
+              .insert([
+                {
+                  score: updatedGameData.gamescore,
+                  gameId: newGameId,
+                  username: data?.username ?? newGameId,
+                },
+              ])
+              .select();
+          };
+          // todo delete game instance in memory
+          await Promise.all([
+            await insertGameEndedData(),
+            await fruitService.deleteOne(newGameId),
+            // await fruitService.setGameCompleted(newGameId),
+            await completedService.create(
+              newGameId,
+              data?.username ?? newGameId,
+              updatedGameData.fruitgrid
+            ),
+          ])
+            .catch((e) => {
+              console.warn(e);
+            })
+            .then(() => {
+              console.log("game ended, should redirect ...");
+              socket.emit("message", { gameEnded: true });
+            })
+            .finally(() => {
+              socket.disconnect(true);
+            });
         }
       } catch (err) {
+        console.warn(err);
         socket.emit("error", `Something went wrong, error: ${err}`);
       }
     });
 
     // Handle disconnection
-    socket.on("disconnect", () => {
-      console.log("Connection closed");
-    });
+    socket.on("disconnect", () => {});
   } catch (error) {
     console.error("Error in socket connection:", error);
     socket.emit("error", "Internal server error");

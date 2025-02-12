@@ -24,7 +24,7 @@
           <tbody class="table-group-divider">
             <tr class="fs-4">
               <th scope="row"><%- gameData.id %></th>
-              <td><%- gameData.created_at %></td>
+              <td><%-convertDateString( gameData.created_at) %></td>
               <td><%- gameData.gameId %></td>
               <td><%- gameData.score %></td>
               <td><%- gameData.username %></td>
@@ -50,7 +50,7 @@
             <% top20.data.forEach(element => { %>
             <tr class="fs-4">
               <th scope="row"><%- element.id %></th>
-              <td><%- element.created_at %></td>
+              <td><%- convertDateString(element.created_at) %></td>
               <td><%- element.gameId %></td>
               <td><%- element.score %></td>
               <td><%- element.username %></td>

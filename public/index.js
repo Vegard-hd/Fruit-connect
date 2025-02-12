@@ -1,5 +1,6 @@
 $(async function () {
   let username;
+  let gameOver = false;
   $("#startGame").on("click", async function (e) {
     username = $("#gameUsername").val();
     sendMessage({ username: username });
@@ -29,9 +30,13 @@ $(async function () {
   // Listen for initial data
   let init;
   socket.on("initial-data", async (data) => {
+    console.log("init data", data);
+    updateMovesLeft(data?.movesLeft);
+    updateScore(data.score);
     if (init === true) return;
     initScoreboard(data?.topScores);
     await initGrid(data?.data);
+
     init = true;
 
     // Handle the initial fruit grid data
@@ -40,19 +45,29 @@ $(async function () {
   // Listen for messages
 
   socket.on("message", async (data) => {
-    console.log(data);
-    console.log();
     if (data?.topScores) {
       updateScoreboard(data?.topScores);
     }
     if (data?.gameEnded) {
-      socket.disconnect();
-      const gameId = (window.location + "").split("?=").at(-1);
-      window.location.replace(`/completed?game=${gameId}`);
+      gameOver = true;
+      $("header").prepend(`
+        <h1 class="text-center fs-2 text-danger">
+          Redirecting <i id="loader">...</i>
+        </h1>
+      `);
+      setTimeout(() => {
+        socket.disconnect();
+        const gameId = (window.location + "").split("?id=").at(-1);
+        window.location.replace(`/completed?game=${gameId}`);
+      }, 3000);
       //TODO better gameEnding page/logic
     }
+    if (data?.movesLeft === 0) {
+      gameOver = true;
+      updateMovesLeft("Game over");
+    }
     if (data?.movesLeft) {
-      updateMovesLeft(data?.movesLeft);
+      updateMovesLeft(data.movesLeft);
     }
     if (data?.score && data?.result) {
       updateScore(data.score);
@@ -145,10 +160,11 @@ $(async function () {
   }
 
   function updateScore(score = 1) {
-    $("#gameScore").text(score);
+    return $("#gameScore").text(score);
   }
 
   $(document).on("click", async function (e) {
+    if (gameOver === true) return;
     try {
       if (e.target.tagName === "IMG") {
         let fruitId = await $(e.target)[0].id;
@@ -208,7 +224,6 @@ $(async function () {
     }
   }
   function updateMovesLeft(movesLeftData) {
-    console.log("data in moves left is  ", movesLeftData);
     return $("#movesLeft").text(movesLeftData);
   }
 });
