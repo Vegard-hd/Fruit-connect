@@ -30,7 +30,6 @@ $(async function () {
   // Listen for initial data
   let init;
   socket.on("initial-data", async (data) => {
-    console.log("init data", data);
     updateMovesLeft(data?.movesLeft);
     updateScore(data.score);
     if (init === true) return;

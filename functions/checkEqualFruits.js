@@ -149,7 +149,6 @@ export async function calculateFruitsDfs(userData, userId) {
     );
 
     const jsonFruitGrid = JSON.stringify(finishedArr);
-    console.time("sqliteq1");
     await Promise.all([
       await fruitService.update(jsonFruitGrid, userId, score),
       await fruitService.updateScore(score, userId),
@@ -157,7 +156,6 @@ export async function calculateFruitsDfs(userData, userId) {
     ]).catch((e) => {
       throw new Error("Failed to write to the database");
     });
-    console.timeEnd("sqliteq1");
 
     const jsonNewDataAndFruit = JSON.stringify(indexPlusNewFruit); // sends only indexes to remove + newFruits
     return jsonNewDataAndFruit;

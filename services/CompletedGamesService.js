@@ -25,7 +25,6 @@ export class CompletedGamesService {
 
   async getOne(gameId) {
     const stmt = this.db.prepare("SELECT * FROM games WHERE id = ?");
-    console.log(stmt);
     return await stmt.get(gameId);
   }
 }

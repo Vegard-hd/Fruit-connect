@@ -10,13 +10,6 @@ import { CompletedGamesService } from "../services/CompletedGamesService";
 const fruitService = new FruitService();
 const completedService = new CompletedGamesService();
 
-async function checkGameExists(gameId) {
-  const data = await completedService.getOne(gameId);
-  console.log(data);
-  if (data && data.completed === 1) return true;
-  return false;
-}
-
 function convertDateString(dateString) {
   const date = new Date(dateString);
   const options = {
@@ -72,12 +65,10 @@ router.get("/game", async (req, res, next) => {
   try {
     // const gameId
     if (id) {
-      console.log(id);
       const gameData = await fruitService.getOne(id);
       if (!gameData) {
         const gameCompleted = await completedService.getOne(id);
         return res.redirect(`/completed?game=${gameCompleted.id}`);
-        // console.log(gameCompleted);
       }
       return res.render("index", {
         gameId: id,
