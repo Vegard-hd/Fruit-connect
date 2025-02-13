@@ -1,6 +1,6 @@
 import { Router } from "express";
 var router = Router();
-import supabase from "../supabase";
+import supabase from "../services/SupabaseService";
 import ShortUniqueId from "short-unique-id";
 const { randomUUID } = new ShortUniqueId({
   length: 12,

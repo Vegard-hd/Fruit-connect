@@ -3,12 +3,12 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { FruitService } from "./services/FruitService";
 import { CompletedGamesService } from "./services/CompletedGamesService";
-import { calculateFruitsDfs } from "./functions/checkEqualFruits";
+import gameCalculationsV1 from "./functions/gameLogic";
 import path from "path";
 import { fileURLToPath } from "url";
 import morgan from "morgan";
 import compression from "compression";
-import supabase from "./supabase";
+import supabase from "./services/SupabaseService";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -116,7 +116,7 @@ io.on("connection", async (socket) => {
       .subscribe();
     socket.on("message", async (message) => {
       try {
-        const result = await calculateFruitsDfs(message, newGameId);
+        const result = await gameCalculationsV1(message, newGameId);
         const updatedGameData = await fruitService.getOne(newGameId);
         if (updatedGameData.moves <= 0) {
           gameEnded = true;
@@ -140,12 +140,11 @@ io.on("connection", async (socket) => {
               ])
               .select();
           };
-          // todo delete game instance in memory
           await Promise.all([
-            await insertGameEndedData(),
-            await fruitService.deleteOne(newGameId),
-            // await fruitService.setGameCompleted(newGameId),
+            await insertGameEndedData(), //inserts into supabase completed games
+            await fruitService.deleteOne(newGameId), //removes from sqlite in memory
             await completedService.create(
+              //inserts into completed_games.db
               newGameId,
               data?.username ?? newGameId,
               updatedGameData.fruitgrid

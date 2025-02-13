@@ -24,7 +24,6 @@ $(async function () {
   });
 
   //socketio connection
-  // In your frontend JavaScript file
   const socket = io();
 
   // Listen for initial data
@@ -37,12 +36,9 @@ $(async function () {
     await initGrid(data?.data);
 
     init = true;
-
-    // Handle the initial fruit grid data
   });
 
   // Listen for messages
-
   socket.on("message", async (data) => {
     if (data?.topScores) {
       updateScoreboard(data?.topScores);
@@ -54,12 +50,13 @@ $(async function () {
           Redirecting <i id="loader">...</i>
         </h1>
       `);
+
+      //redirecs user on game complete
       setTimeout(() => {
         socket.disconnect();
         const gameId = (window.location + "").split("?id=").at(-1);
         window.location.replace(`/completed?game=${gameId}`);
-      }, 3000);
-      //TODO better gameEnding page/logic
+      }, 2000);
     }
     if (data?.movesLeft === 0) {
       gameOver = true;
@@ -78,7 +75,7 @@ $(async function () {
 
   // Listen for errors
   socket.on("error", (error) => {
-    console.error("Socket error:", error);
+    console.error("Something wrong with the connection ....");
   });
 
   // To send messages to the server
@@ -147,9 +144,7 @@ $(async function () {
             rowCount++;
           }
         });
-        setTimeout(() => {
-          resolve();
-        }, 1000);
+        resolve("success");
       } catch (error) {
         console.error(error);
         reject(error);
@@ -163,8 +158,8 @@ $(async function () {
   }
 
   $(document).on("click", async function (e) {
-    if (gameOver === true) return;
     try {
+      if (gameOver === true) return;
       if (e.target.tagName === "IMG") {
         let fruitId = await $(e.target)[0].id;
         if (!fruitId) return;
@@ -184,7 +179,7 @@ $(async function () {
           // Animate the replacement
           gsap.to(rowSelector, {
             scale: 0,
-            duration: 0.5,
+            duration: 0.2,
             onComplete: () => {
               $(rowSelector).replaceWith(`
                 <tr id="row-${i + 1}">

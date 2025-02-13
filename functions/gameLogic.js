@@ -67,25 +67,17 @@ async function findConnectedFruits(
   });
   return await promise;
 }
-export async function removeAndShiftFruits(gameFruitArr, indicesToRemove) {
+async function removeAndShiftFruits(gameFruitArr, indicesToRemove) {
   const promise = await new Promise((resolve, reject) => {
     const width = 10; // Number of columns in each row
 
-    // Ensure we process from smaller to larger indices so we don’t overwrite
-    // items we haven't shifted yet.
-    const indexArr = indicesToRemove
-      // .filter((element) => element?.index)
-      .sort((a, b) => a?.index - b?.index);
-    // const sortedIndices = Array.from(indicesToRemove).sort((a, b) => a - b);
+    const indexArr = indicesToRemove.sort((a, b) => a?.index - b?.index);
     for (const element of indexArr) {
       const index = element?.index;
       // Calculate which row the index is in
       const row = Math.floor(index / width);
       const rowStart = row * width; // start index of this row
 
-      // const rowEnd = rowStart + width - 1;
-      // Shift all fruits from rowStart...index-1 downward by one slot
-      // For example, if index = 32, we shift [rowStart...31] downward into [rowStart+1...32].
       for (let i = index; i > rowStart; i--) {
         // Copy the fruit above into current position
         gameFruitArr[i] = gameFruitArr[i - 1];
@@ -93,14 +85,13 @@ export async function removeAndShiftFruits(gameFruitArr, indicesToRemove) {
 
       // Place a new fruit at the start of the row (rowStart)
       gameFruitArr[rowStart] = element.newFruit;
-      // gameFruitArr[rowStart].i.id = newFruitObject.id;
     }
     resolve(gameFruitArr);
   });
   return promise;
 }
 
-export async function calculateFruitsDfs(userData, userId) {
+export default async function gameCalculationsV1(userData, userId) {
   try {
     let data = await fruitService.getOne(userId);
     if (!data) throw new Error("Failed to retrieve data ");
