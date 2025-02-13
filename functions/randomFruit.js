@@ -5,12 +5,12 @@ const { randomUUID } = new ShortUniqueId({
 });
 
 export function randomFruit() {
-  const pear = `/public/assets/pear.svg`;
-  const mango = `/public/assets/mango.svg`;
-  const lemon = `/public/assets/lemon.svg`;
-  const orange = `/public/assets/orange.svg`;
-  const apple = `/public/assets/apple.svg`;
-  const plum = `/public/assets/plum.svg`;
+  const pear = `/assets/pear.svg`;
+  const mango = `/assets/mango.svg`;
+  const lemon = `/assets/lemon.svg`;
+  const orange = `/assets/orange.svg`;
+  const apple = `/assets/apple.svg`;
+  const plum = `/assets/plum.svg`;
   let svgSrc;
   let fruitType;
   let rNum = Math.floor(Math.random() * 6 + 1);

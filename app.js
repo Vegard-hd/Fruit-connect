@@ -33,24 +33,24 @@ const completedService = new CompletedGamesService();
 // Get the directory name using ES modules
 
 // Serve static files
-app.use("/public", express.static(path.join(__dirname, "public")));
+app.use("/", express.static(path.join(__dirname, "public")));
 app.use(
-  "/public/js",
+  "/js",
   express.static(path.join(__dirname, "node_modules/bootstrap/dist/js")),
   express.static(path.join(__dirname, "node_modules/socket.io/client-dist"))
 );
 app.use(
-  "/public/supabase",
+  "/supabase",
   express.static(
     path.join(__dirname, "node_modules/@supabase/supabase-js/dist/module")
   )
 );
 app.use(
-  "/public/css",
+  "/css",
   express.static(path.join(__dirname, "node_modules/bootstrap/dist/css"))
 );
 app.use(
-  "/public/js/jquery.slim.min.js",
+  "/js/jquery.slim.min.js",
   express.static(
     path.join(__dirname, "node_modules/jquery/dist/jquery.slim.min.js")
   )
