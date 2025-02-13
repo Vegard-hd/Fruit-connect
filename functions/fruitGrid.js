@@ -1,5 +1,5 @@
-const randomfruit = require("./randomFruit");
-class FruitGrid {
+import { randomFruit } from "./randomFruit";
+export default class FruitGrid {
   _reviver(key, value) {
     if (typeof value === "object" && value !== null) {
       if (value.dataType === "Map") {
@@ -21,7 +21,7 @@ class FruitGrid {
   gridOfFruits = new Array();
   initGrid() {
     for (let i = 0; i <= 119; i++) {
-      this.gridOfFruits.push(randomfruit());
+      this.gridOfFruits.push(randomFruit());
     }
     // console.table(this.gridOfFruits);
   }
@@ -32,4 +32,3 @@ class FruitGrid {
     return JSON.parse(this.gridOfFruits);
   }
 }
-module.exports = FruitGrid;

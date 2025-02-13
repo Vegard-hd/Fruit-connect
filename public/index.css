@@ -1,0 +1,84 @@
+img {
+  z-index: 90;
+  -webkit-user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  width: calc(
+    (1250% / 12) + 5px
+  ); /* Adjust the 10px for spacing if necessary */
+  height: auto; /* Maintain aspect ratio */
+}
+
+/* Assuming this is the parent container of #gridWrapper */
+#parentContainer {
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center; /* Centers vertically */
+
+  /* height: 100vh; Full height of the viewport */
+}
+
+.buttonWrapper {
+  margin: 0 auto;
+  display: grid;
+  width: clamp(calc(320px - 3rem), 75%, 70ch);
+  height: calc(75vh - 2.5rem);
+}
+
+/* CSS */
+.button-24 {
+  justify-self: center;
+  align-self: center;
+  background: #ff4742;
+  border: 1px solid #ff4742;
+  border-radius: 6px;
+  box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
+  box-sizing: border-box;
+  color: #ffffff;
+  cursor: pointer;
+  font-family: nunito, roboto, proxima-nova, "proxima nova", sans-serif;
+  font-size: clamp(16px, 3dvh, 4rem);
+  font-weight: 800;
+  line-height: 16px;
+  min-height: 40px;
+  outline: 0;
+  width: 75%;
+  height: clamp(100px, 15rem, 205px);
+  /* padding: 12px 14px; */
+  text-align: center;
+  text-rendering: geometricprecision;
+  text-transform: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.button-24:hover,
+.button-24:active {
+  background-color: initial;
+  background-position: 0 0;
+  color: #ff4742;
+}
+
+.button-24:active {
+  opacity: 0.5;
+}
+
+/* Your existing #gridWrapper styles */
+#gridWrapper {
+  border: calc(0.25vw + 1px) solid black;
+
+  display: grid;
+  grid-template-columns: repeat(12, [col-start] 1fr);
+  /* gap: 20px; */
+  z-index: 99;
+  align-items: end;
+}
+/* .fruitBox {
+      flex-direction: column-reverse;
+  } */
+#unclickable-element {
+  pointer-events: none;
+}

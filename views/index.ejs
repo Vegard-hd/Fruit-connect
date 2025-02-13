@@ -1,40 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fruit Crush</title>
-    <link rel="stylesheet" href="/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/css/style.css" />
-  </head>
-  <%- include('./partials/navbar.ejs') %>
-  <body>
-    <div class="text-center">
-      <h2 class="text-bg-warning pt-3 pb-3">
-        Score is <i id="gameScore"> <%= score.gamescore %></i>
+  <%- include('./partials/head.ejs') %>
+  <body class="container-fluid">
+    <section id="gameScoreDisplay" class="row">
+      <h2 class="text-bg-warning pt-3 pb-3 text-center">
+        Score is:
+        <i class="fs-1 text-success text-decoration-underline" id="gameScore">
+          0</i
+        >
+        <div>&nbsp;</div>
+        Moves left:
+        <i class="fs-1 text-danger text-decoration-underline" id="movesLeft">
+          10</i
+        >
       </h2>
-    </div>
-    <main class="parentContainer">
-      <div id="gridWrapper">
-        <div id="row1"></div>
-        <div id="row2"></div>
-        <div id="row3"></div>
-        <div id="row4"></div>
-        <div id="row5"></div>
-        <div id="row6"></div>
-        <div id="row7"></div>
-        <div id="row8"></div>
-        <div id="row9"></div>
-        <div id="row10"></div>
-        <div id="row11"></div>
-        <div id="row12"></div>
-      </div>
+    </section>
+    <header>
+      <h1 class="text-center fs-1 mt-5 text-danger text-decoration-underline">
+        Fruit-connect
+      </h1>
+    </header>
+    <main class="container-fluid gap-0 text-center" style="max-width: 800px">
+      <section id="gameContainer" class="row g-0">
+        <div id="gridWrapper" class="col-md-8 col-12">
+          <div id="row1"></div>
+          <div id="row2"></div>
+          <div id="row3"></div>
+          <div id="row4"></div>
+          <div id="row5"></div>
+          <div id="row6"></div>
+          <div id="row7"></div>
+          <div id="row8"></div>
+          <div id="row9"></div>
+          <div id="row10"></div>
+          <div id="row11"></div>
+          <div id="row12"></div>
+        </div>
+        <div class="col-md-4 col-12">
+          <%- include('./partials/scoreTable.ejs') %>
+        </div>
+      </section>
     </main>
-    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
-
-    <script src="/js/jquerylatest.slim.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/motion.js"></script>
-    <script src="/js/game.js"></script>
   </body>
+  <%- include('./partials/script.ejs') %>
 </html>

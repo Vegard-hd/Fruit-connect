@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include('./partials/head.ejs') %>
+
+  <body>
+    <main>
+      <div class="text-center">
+        <button id="playagain" class="m-3 btn btn-lg btn-primary">
+          Play again!
+        </button>
+      </div>
+      <section class="container-md text-center">
+        <h3 class="p-3 fs-2 text-decoration-underline">This game</h3>
+        <table class="table table-success table-sm">
+          <thead>
+            <tr class="fs-4">
+              <th scope="col">id</th>
+              <th scope="col">completed at</th>
+              <th scope="col">game id</th>
+              <th scope="col">score</th>
+              <th scope="col">username</th>
+            </tr>
+          </thead>
+          <tbody class="table-group-divider">
+            <tr class="fs-4">
+              <th scope="row"><%- gameData.id %></th>
+              <td><%-convertDateString( gameData.created_at) %></td>
+              <td><%- gameData.gameId %></td>
+              <td><%- gameData.score %></td>
+              <td><%- gameData.username %></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      <section class="container-md text-center">
+        <h3 class="p-5 fs-2 text-decoration-underline">
+          Top 20 in descending order
+        </h3>
+        <table class="table table-danger table-sm">
+          <thead>
+            <tr class="fs-4">
+              <th scope="col">id</th>
+              <th scope="col">completed at</th>
+              <th scope="col">game id</th>
+              <th scope="col">score</th>
+              <th scope="col">username</th>
+            </tr>
+          </thead>
+          <tbody class="table-group-divider">
+            <% top20.data.forEach(element => { %>
+            <tr class="fs-4">
+              <th scope="row"><%- element.id %></th>
+              <td><%- convertDateString(element.created_at) %></td>
+              <td><%- element.gameId %></td>
+              <td><%- element.score %></td>
+              <td><%- element.username %></td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </section>
+    </main>
+  </body>
+  <script>
+    const btn = document.getElementById("playagain");
+    btn.addEventListener("click", (e) => {
+      location.replace("/");
+    });
+  </script>
+</html>
