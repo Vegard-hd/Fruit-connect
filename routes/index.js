@@ -9,6 +9,7 @@ import { FruitService } from "../services/FruitService";
 import { CompletedGamesService } from "../services/CompletedGamesService";
 const fruitService = new FruitService();
 const completedService = new CompletedGamesService();
+import fetchTopScores from "../functions/fecthSupaData";
 
 function convertDateString(dateString) {
   const date = new Date(dateString);
@@ -26,18 +27,16 @@ function convertDateString(dateString) {
 router.get("/completed", async (req, res, next) => {
   try {
     const { game } = req.query;
+    console.log(game);
+
     if (!game) next(error);
     const [gameData, top20] = await Promise.all([
       await supabase.from("completedGames").select("*").ilike("gameId", game),
-      await supabase
-        .from("completedGames")
-        .select("*")
-        .order("score", { ascending: false })
-        .limit(20),
+      await fetchTopScores(),
     ]).catch((e) => {
       throw new Error("Failed to get data from the supabase database");
     });
-
+    console.log("gamedata is ... ", gameData?.data[0]);
     res.render("completed", {
       gameData: gameData?.data[0],
       top20: top20,

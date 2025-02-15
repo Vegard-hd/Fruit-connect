@@ -47,7 +47,7 @@
             </tr>
           </thead>
           <tbody class="table-group-divider">
-            <% top20.data.forEach(element => { %>
+            <% top20.forEach(element => { %>
             <tr class="fs-4">
               <th scope="row"><%- element.id %></th>
               <td><%- convertDateString(element.created_at) %></td>
