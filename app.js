@@ -9,7 +9,9 @@ import { fileURLToPath } from "url";
 import morgan from "morgan";
 import compression from "compression";
 import supabase from "./services/SupabaseService";
-
+// import  from "./services/RedisConn";
+import fetchTopScores from "./functions/fecthSupaData";
+import redisClient from "./services/RedisConn";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -30,6 +32,7 @@ const io = new Server(server, {
 });
 const fruitService = new FruitService();
 const completedService = new CompletedGamesService();
+
 // Get the directory name using ES modules
 
 // Serve static files
@@ -58,20 +61,6 @@ app.use(
 
 app.use("/favicon.ico", express.static(path.join(__dirname, "favicon.ico")));
 
-async function fetchTopScores() {
-  const { data, error } = await supabase
-    .from("completedGames")
-    .select("*")
-    .order("score", { ascending: false })
-    .limit(10);
-
-  if (error) {
-    console.error("Error fetching top scores:", error);
-  } else {
-    return data;
-  }
-}
-
 app.use("/", indexRouter);
 
 io.on("connection", async (socket) => {
@@ -93,7 +82,7 @@ io.on("connection", async (socket) => {
       throw new Error("Failed to retrieve data");
     });
     if (data?.completed === 1) {
-      return; //game is completed
+      return; //game is completed do nothing
     }
     socket.emit("initial-data", {
       data: data?.fruitgrid,
@@ -101,15 +90,19 @@ io.on("connection", async (socket) => {
       movesLeft: data?.moves,
       score: data?.gamescore,
     });
-    //supabase subscripe method
+    //supabase subscribe method
     supabase
       .channel("custom-insert-channel")
       .on(
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "completedGames" },
         async (payload) => {
-          console.log(payload);
-          const topScores = await fetchTopScores();
+          let topScores = await fetchTopScores();
+          // const topScoresObj = JSON.parse(topScores);
+          if (Number.parseInt(payload?.new?.score) > topScores.at(-1)?.score) {
+            topScores = await fetchTopScores(true);
+          }
+          console.log("payload", payload);
           socket.emit("message", { topScores: topScores });
         }
       )
@@ -127,18 +120,16 @@ io.on("connection", async (socket) => {
           movesLeft: updatedGameData.moves,
         });
         if (gameEnded === true) {
+          console.time("gameEnded");
           //gameEnded
           const insertGameEndedData = async () => {
-            return await supabase
-              .from("completedGames")
-              .insert([
-                {
-                  score: updatedGameData.gamescore,
-                  gameId: newGameId,
-                  username: data?.username ?? newGameId,
-                },
-              ])
-              .select();
+            return await supabase.from("completedGames").insert([
+              {
+                score: updatedGameData.gamescore,
+                gameId: newGameId,
+                username: data?.username ?? newGameId,
+              },
+            ]);
           };
           await Promise.all([
             await insertGameEndedData(), //inserts into supabase completed games
@@ -158,6 +149,8 @@ io.on("connection", async (socket) => {
               socket.emit("message", { gameEnded: true });
             })
             .finally(() => {
+              console.timeEnd("gameEnded");
+
               socket.disconnect(true);
             });
         }
