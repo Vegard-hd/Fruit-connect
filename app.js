@@ -98,7 +98,7 @@ io.on("connection", async (socket) => {
         { event: "INSERT", schema: "public", table: "completedGames" },
         async (payload) => {
           let topScores = await fetchTopScores();
-          // const topScoresObj = JSON.parse(topScores);
+          //force topscores recache if score is higher than score 20;
           if (Number.parseInt(payload?.new?.score) > topScores.at(-1)?.score) {
             topScores = await fetchTopScores(true);
           }
@@ -120,7 +120,6 @@ io.on("connection", async (socket) => {
           movesLeft: updatedGameData.moves,
         });
         if (gameEnded === true) {
-          console.time("gameEnded");
           //gameEnded
           const insertGameEndedData = async () => {
             return await supabase.from("completedGames").insert([
@@ -145,12 +144,9 @@ io.on("connection", async (socket) => {
               console.warn(e);
             })
             .then(() => {
-              console.log("game ended, should redirect ...");
               socket.emit("message", { gameEnded: true });
             })
             .finally(() => {
-              console.timeEnd("gameEnded");
-
               socket.disconnect(true);
             });
         }

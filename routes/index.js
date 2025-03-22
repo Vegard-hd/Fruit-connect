@@ -27,7 +27,6 @@ function convertDateString(dateString) {
 router.get("/completed", async (req, res, next) => {
   try {
     const { game } = req.query;
-    console.log(game);
 
     if (!game) next(error);
     const [gameData, top20] = await Promise.all([
@@ -36,7 +35,7 @@ router.get("/completed", async (req, res, next) => {
     ]).catch((e) => {
       throw new Error("Failed to get data from the supabase database");
     });
-    console.log("gamedata is ... ", gameData?.data[0]);
+    // console.log("gamedata is ... ", gameData?.data[0]);
     res.render("completed", {
       gameData: gameData?.data[0],
       top20: top20,

@@ -16,10 +16,9 @@ COPY . .
 # build the script and CSS files
 RUN bun run build.js
 
-ENV NODE_ENV=production
 
 # Expose the port the app runs on
-EXPOSE 3000
+EXPOSE 3007
 
 # Command to run the app
 CMD ["bun", "run", "app"]

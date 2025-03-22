@@ -13,17 +13,11 @@ async function getTopScores() {
 }
 
 export default async function fetchTopScores(force = false) {
-  console.time("fetchTopScores");
   try {
     const redisData = await getTopScores();
     if (redisData && !force) {
-      console.log("redisData used...");
-      console.timeEnd("fetchTopScores");
       return redisData;
     } else {
-      console.log("supaBase data used...");
-      console.time("supabaseget20");
-      console.time("");
       const { data, error } = await supabase
         .from("completedGames")
         .select("*")
@@ -34,7 +28,6 @@ export default async function fetchTopScores(force = false) {
 
       const jsonData = JSON.stringify(data);
       await redisClient.set("topscores", jsonData);
-      console.timeEnd("supabaseget20");
       return data;
     }
   } catch (error) {
