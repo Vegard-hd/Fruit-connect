@@ -2,16 +2,18 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { FruitService } from "./services/FruitService";
-import { CompletedGamesService } from "./services/CompletedGamesService";
+// import { CompletedGamesService } from "./services/CompletedGamesService";
 import gameCalculationsV1 from "./functions/gameLogic";
 import path from "path";
 import { fileURLToPath } from "url";
 import morgan from "morgan";
 import compression from "compression";
-import supabase from "./services/SupabaseService";
-// import  from "./services/RedisConn";
+
 import fetchTopScores from "./functions/fecthSupaData";
-import redisClient from "./services/RedisConn";
+
+import CompletedGamesService from "./services/MongoClient";
+const completedGamesService = new CompletedGamesService();
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -31,7 +33,7 @@ const io = new Server(server, {
   cookie: false,
 });
 const fruitService = new FruitService();
-const completedService = new CompletedGamesService();
+// const completedService = new CompletedGamesService();
 
 // Get the directory name using ES modules
 
@@ -76,7 +78,7 @@ io.on("connection", async (socket) => {
     }
     const [data, topScores] = await Promise.all([
       await fruitService.getOne(newGameId),
-      await fetchTopScores(),
+      await completedGamesService.getTop10(),
     ]).catch((e) => {
       console.warn(e);
       throw new Error("Failed to retrieve data");
@@ -91,7 +93,7 @@ io.on("connection", async (socket) => {
       score: data?.gamescore,
     });
     //supabase subscribe method
-    supabase
+    /*     supabase
       .channel("custom-insert-channel")
       .on(
         "postgres_changes",
@@ -106,11 +108,12 @@ io.on("connection", async (socket) => {
           socket.emit("message", { topScores: topScores });
         }
       )
-      .subscribe();
+      .subscribe(); */
     socket.on("message", async (message) => {
       try {
         const result = await gameCalculationsV1(message, newGameId);
         const updatedGameData = await fruitService.getOne(newGameId);
+        console.log(updatedGameData);
         if (updatedGameData.moves <= 0) {
           gameEnded = true;
         }
@@ -121,23 +124,13 @@ io.on("connection", async (socket) => {
         });
         if (gameEnded === true) {
           //gameEnded
-          const insertGameEndedData = async () => {
-            return await supabase.from("completedGames").insert([
-              {
-                score: updatedGameData.gamescore,
-                gameId: newGameId,
-                username: data?.username ?? newGameId,
-              },
-            ]);
-          };
           await Promise.all([
-            await insertGameEndedData(), //inserts into supabase completed games
             await fruitService.deleteOne(newGameId), //removes from sqlite in memory
-            await completedService.create(
+            await completedGamesService.saveGame(
               //inserts into completed_games.db
-              newGameId,
               data?.username ?? newGameId,
-              updatedGameData.fruitgrid
+              Number.parseInt(updatedGameData.gamescore, 10),
+              newGameId
             ),
           ])
             .catch((e) => {

@@ -14,12 +14,18 @@
     "bootstrap": "^5.3.3",
     "compression": "^1.7.5",
     "cookie": "^1.0.2",
+    "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
     "jquery": "^3.7.1",
+    "mongodb": "^6.15.0",
+    "mongoose": "^8.12.2",
     "morgan": "^1.10.0",
     "redis": "^4.7.0",
     "short-unique-id": "^5.2.0",
     "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.11"
   }
 }

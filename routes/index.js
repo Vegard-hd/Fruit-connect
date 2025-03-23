@@ -10,6 +10,8 @@ import { CompletedGamesService } from "../services/CompletedGamesService";
 const fruitService = new FruitService();
 const completedService = new CompletedGamesService();
 import fetchTopScores from "../functions/fecthSupaData";
+import MongoService from "../services/MongoClient";
+const mongoService = new MongoService();
 
 function convertDateString(dateString) {
   const date = new Date(dateString);
@@ -28,16 +30,17 @@ router.get("/completed", async (req, res, next) => {
   try {
     const { game } = req.query;
 
-    if (!game) next(error);
+    if (!game) next("Game does not exist");
     const [gameData, top20] = await Promise.all([
-      await supabase.from("completedGames").select("*").ilike("gameId", game),
+      await mongoService.getOne(game),
       await fetchTopScores(),
     ]).catch((e) => {
-      throw new Error("Failed to get data from the supabase database");
+      throw new Error("Failed to get data in /completed router", error);
     });
+    console.log(gameData);
     // console.log("gamedata is ... ", gameData?.data[0]);
     res.render("completed", {
-      gameData: gameData?.data[0],
+      gameData: gameData,
       top20: top20,
       convertDateString: convertDateString,
     });

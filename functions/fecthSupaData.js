@@ -1,35 +1,24 @@
-import supabase from "../services/SupabaseService";
-import redisClient from "../services/RedisConn";
+import CompletedGamesService from "../services/MongoClient";
+
+const completedGamesService = new CompletedGamesService();
+
 async function getTopScores() {
   try {
-    const data = await redisClient.get("topscores").then((data) => {
-      return JSON.parse(data);
+    const data = await completedGamesService.getTop10().then((data) => {
+      console.log("topscores from getTopScores mongo method", data);
+      return data ?? [];
     });
-    if (!data) return false;
+    if (!data || data?.length === 0) return false;
     return data;
   } catch (error) {
-    console.warn("someting wrong with redis getter func");
+    console.warn("Failed to get topscores from mongodb");
   }
 }
 
 export default async function fetchTopScores(force = false) {
   try {
-    const redisData = await getTopScores();
-    if (redisData && !force) {
-      return redisData;
-    } else {
-      const { data, error } = await supabase
-        .from("completedGames")
-        .select("*")
-        .order("score", { ascending: false })
-        .limit(20);
-
-      if (error) throw new Error("Eroror fetching top score from supabase");
-
-      const jsonData = JSON.stringify(data);
-      await redisClient.set("topscores", jsonData);
-      return data;
-    }
+    const data = await getTopScores();
+    return data;
   } catch (error) {
     console.warn(error);
   }
