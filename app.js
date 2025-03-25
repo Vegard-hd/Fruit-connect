@@ -91,8 +91,7 @@ io.on("connection", async (socket) => {
       topScores: topScores,
       movesLeft: data?.moves,
       score: data?.gamescore,
-    });
-    //supabase subscribe method
+    });    //supabase subscribe method
     /*     supabase
       .channel("custom-insert-channel")
       .on(
@@ -109,6 +108,7 @@ io.on("connection", async (socket) => {
         }
       )
       .subscribe(); */
+
     socket.on("message", async (message) => {
       try {
         const result = await gameCalculationsV1(message, newGameId);

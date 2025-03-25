@@ -1,5 +1,5 @@
 # Dockerfile for Bun app
-FROM oven/bun:1.2.2-alpine
+FROM oven/bun:1.2.6-alpine
 
 # Create and set the working directory
 WORKDIR /app
@@ -15,7 +15,6 @@ COPY . .
 
 # build the script and CSS files
 RUN bun run build.js
-
 
 # Expose the port the app runs on
 EXPOSE 3007

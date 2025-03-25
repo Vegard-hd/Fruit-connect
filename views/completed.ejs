@@ -16,16 +16,14 @@
             <tr class="fs-4">
               <th scope="col">id</th>
               <th scope="col">completed at</th>
-              <th scope="col">game id</th>
               <th scope="col">score</th>
               <th scope="col">username</th>
             </tr>
           </thead>
           <tbody class="table-group-divider">
             <tr class="fs-4">
-              <th scope="row"><%- gameData.id %></th>
+              <th scope="row"><%- gameData.gameId %></th>
               <td><%-convertDateString( gameData.date) %></td>
-              <td><%- gameData.gameId %></td>
               <td><%- gameData.score %></td>
               <td><%- gameData.username %></td>
             </tr>
@@ -41,7 +39,6 @@
             <tr class="fs-4">
               <th scope="col">id</th>
               <th scope="col">completed at</th>
-              <th scope="col">game id</th>
               <th scope="col">score</th>
               <th scope="col">username</th>
             </tr>
@@ -49,9 +46,8 @@
           <tbody class="table-group-divider">
             <% top20.forEach(element => { %>
             <tr class="fs-4">
-              <th scope="row"><%- element.id %></th>
+              <th scope="row"><%- element.gameId %></th>
               <td><%- convertDateString(element.date) %></td>
-              <td><%- element.gameId %></td>
               <td><%- element.score %></td>
               <td><%- element.username %></td>
             </tr>
