@@ -1,5 +1,5 @@
 # Dockerfile for Bun app
-FROM oven/bun:1.2.6-alpine
+FROM oven/bun:1.2.7-alpine
 
 # Create and set the working directory
 WORKDIR /app
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN bun install --production
+RUN bun install
 
 # Copy the rest of the application code
 COPY . .
