@@ -58,6 +58,14 @@
     </main>
   </body>
   <script>
+    let plausibleCb = false;
+    function completeGame() {
+      if (!plausibleCb) {
+        plausible("completedGame");
+        plausibleCb = true;
+      }
+    }
+    completeGame();
     const btn = document.getElementById("playagain");
     btn.addEventListener("click", (e) => {
       location.replace("/");
