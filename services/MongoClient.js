@@ -9,7 +9,7 @@ mongoose
   .connect(uri, {
     dbName: "fruit-connect",
   })
-  .then(() => console.log("Connected!"));
+  .then(() => console.log("MongoDB connected!"));
 
 const CompletedGamesSchema = new Schema({
   gameId: String,

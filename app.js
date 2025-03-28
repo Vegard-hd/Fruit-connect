@@ -91,29 +91,12 @@ io.on("connection", async (socket) => {
       topScores: topScores,
       movesLeft: data?.moves,
       score: data?.gamescore,
-    });    //supabase subscribe method
-    /*     supabase
-      .channel("custom-insert-channel")
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "completedGames" },
-        async (payload) => {
-          let topScores = await fetchTopScores();
-          //force topscores recache if score is higher than score 20;
-          if (Number.parseInt(payload?.new?.score) > topScores.at(-1)?.score) {
-            topScores = await fetchTopScores(true);
-          }
-          console.log("payload", payload);
-          socket.emit("message", { topScores: topScores });
-        }
-      )
-      .subscribe(); */
+    });
 
     socket.on("message", async (message) => {
       try {
         const result = await gameCalculationsV1(message, newGameId);
         const updatedGameData = await fruitService.getOne(newGameId);
-        console.log(updatedGameData);
         if (updatedGameData.moves <= 0) {
           gameEnded = true;
         }

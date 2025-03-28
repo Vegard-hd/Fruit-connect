@@ -37,8 +37,6 @@ router.get("/completed", async (req, res, next) => {
     ]).catch((e) => {
       throw new Error("Failed to get data in /completed router", error);
     });
-    console.log(gameData);
-    // console.log("gamedata is ... ", gameData?.data[0]);
     res.render("completed", {
       gameData: gameData,
       top20: top20,
