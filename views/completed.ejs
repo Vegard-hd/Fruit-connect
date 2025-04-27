@@ -5,51 +5,48 @@
   <body>
     <main>
       <div class="text-center">
-        <button id="playagain" class="m-3 btn btn-lg btn-primary">
+        <button
+          id="playagain"
+          class="m-3 ps-5 pe-5 mt-5 btn btn-lg btn-warning"
+        >
           Play again!
         </button>
       </div>
       <section class="container-md text-center">
-        <h3 class="p-3 fs-2 text-decoration-underline">This game</h3>
+        <h3 class="p-3 mt-5 fs-1">This game</h3>
         <table class="table table-success table-sm">
           <thead>
             <tr class="fs-4">
-              <th scope="col">id</th>
+              <th scope="col">username</th>
               <th scope="col">completed at</th>
               <th scope="col">score</th>
-              <th scope="col">username</th>
             </tr>
           </thead>
           <tbody class="table-group-divider">
             <tr class="fs-4">
-              <th scope="row"><%- gameData.gameId %></th>
+              <th><%- gameData.username %></th>
               <td><%-convertDateString( gameData.date) %></td>
               <td><%- gameData.score %></td>
-              <td><%- gameData.username %></td>
             </tr>
           </tbody>
         </table>
       </section>
       <section class="container-md text-center">
-        <h3 class="p-5 fs-2 text-decoration-underline">
-          Top 20 in descending order
-        </h3>
+        <h3 class="p-3 mt-5 fs-1">Top 20 in descending order</h3>
         <table class="table table-danger table-sm">
           <thead>
             <tr class="fs-4">
-              <th scope="col">id</th>
+              <th scope="col">username</th>
               <th scope="col">completed at</th>
               <th scope="col">score</th>
-              <th scope="col">username</th>
             </tr>
           </thead>
           <tbody class="table-group-divider">
             <% top20.forEach(element => { %>
             <tr class="fs-4">
-              <th scope="row"><%- element.gameId %></th>
+              <th><%- element.username %></th>
               <td><%- convertDateString(element.date) %></td>
               <td><%- element.score %></td>
-              <td><%- element.username %></td>
             </tr>
             <% }) %>
           </tbody>
