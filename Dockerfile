@@ -1,5 +1,5 @@
 # Dockerfile for Bun app
-FROM oven/bun:1.2.7-alpine
+FROM oven/bun:1.2.10-alpine
 
 # Create and set the working directory
 WORKDIR /app
