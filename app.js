@@ -2,14 +2,11 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { FruitService } from "./services/FruitService";
-// import { CompletedGamesService } from "./services/CompletedGamesService";
 import gameCalculationsV1 from "./functions/gameLogic";
 import path from "path";
 import { fileURLToPath } from "url";
 import morgan from "morgan";
 import compression from "compression";
-
-import fetchTopScores from "./functions/fecthSupaData";
 
 import CompletedGamesService from "./services/MongoClient";
 const completedGamesService = new CompletedGamesService();
@@ -18,7 +15,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 import indexRouter from "./routes/index";
-// import { router } from "./routes/index";
 const app = express();
 
 // view engine setup
@@ -33,9 +29,6 @@ const io = new Server(server, {
   cookie: false,
 });
 const fruitService = new FruitService();
-// const completedService = new CompletedGamesService();
-
-// Get the directory name using ES modules
 
 // Serve static files
 app.use("/", express.static(path.join(__dirname, "public")));

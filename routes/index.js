@@ -1,6 +1,5 @@
 import { Router } from "express";
 var router = Router();
-import supabase from "../services/SupabaseService";
 import ShortUniqueId from "short-unique-id";
 const { randomUUID } = new ShortUniqueId({
   length: 12,
@@ -9,7 +8,6 @@ import { FruitService } from "../services/FruitService";
 import { CompletedGamesService } from "../services/CompletedGamesService";
 const fruitService = new FruitService();
 const completedService = new CompletedGamesService();
-import fetchTopScores from "../functions/fecthSupaData";
 import MongoService from "../services/MongoClient";
 const mongoService = new MongoService();
 
@@ -33,7 +31,7 @@ router.get("/completed", async (req, res, next) => {
     if (!game) next("Game does not exist");
     const [gameData, top20] = await Promise.all([
       await mongoService.getOne(game),
-      await fetchTopScores(),
+      await mongoService.getTop10(),
     ]).catch((e) => {
       throw new Error("Failed to get data in /completed router", error);
     });
