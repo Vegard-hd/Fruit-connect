@@ -1,4 +1,4 @@
-import FruitGrid from "../functions/FruitGrid";
+import FruitGrid from "../functions/fruitGrid.js";
 import { Database } from "bun:sqlite";
 const db = new Database(":memory:");
 /* Create the fruit table if it doesn't exist */
