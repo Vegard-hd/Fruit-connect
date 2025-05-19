@@ -37,12 +37,12 @@ app.use(
   express.static(path.join(__dirname, "node_modules/bootstrap/dist/js")),
   express.static(path.join(__dirname, "node_modules/socket.io/client-dist"))
 );
-app.use(
+/* app.use(
   "/supabase",
   express.static(
     path.join(__dirname, "node_modules/@supabase/supabase-js/dist/module")
   )
-);
+); */
 app.use(
   "/css",
   express.static(path.join(__dirname, "node_modules/bootstrap/dist/css"))
@@ -126,7 +126,9 @@ io.on("connection", async (socket) => {
     });
 
     // Handle disconnection
-    socket.on("disconnect", () => {});
+    socket.on("disconnect", () => {
+      // TODO: clean up sqlite inmemory db
+    });
   } catch (error) {
     console.error("Error in socket connection:", error);
     socket.emit("error", "Internal server error");

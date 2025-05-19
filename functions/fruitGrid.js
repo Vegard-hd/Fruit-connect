@@ -1,5 +1,5 @@
 import { randomFruit } from "./randomFruit";
-export class FruitGrid {
+export default class FruitGrid {
   _reviver(key, value) {
     if (typeof value === "object" && value !== null) {
       if (value.dataType === "Map") {
