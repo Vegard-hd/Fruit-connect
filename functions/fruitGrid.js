@@ -1,5 +1,5 @@
 import { randomFruit } from "./randomFruit";
-export default class FruitGrid {
+export class FruitGrid {
   _reviver(key, value) {
     if (typeof value === "object" && value !== null) {
       if (value.dataType === "Map") {
@@ -18,17 +18,21 @@ export default class FruitGrid {
       return value;
     }
   }
-  gridOfFruits = new Array();
-  initGrid() {
-    for (let i = 0; i <= 119; i++) {
-      this.gridOfFruits.push(randomFruit());
+
+  initGrid(force = true) {
+    let gridOfFruits;
+    if (force === true) {
+      gridOfFruits = new Array();
+      for (let i = 0; i <= 119; i++) {
+        gridOfFruits.push(randomFruit());
+      }
     }
-    // console.table(this.gridOfFruits);
+    return gridOfFruits;
   }
-  stringifyFruits() {
-    return JSON.stringify(this.gridOfFruits);
+  stringifyFruits(input) {
+    return JSON.stringify(input);
   }
-  parseFruits() {
-    return JSON.parse(this.gridOfFruits);
+  parseFruits(input) {
+    return JSON.parse(input);
   }
 }

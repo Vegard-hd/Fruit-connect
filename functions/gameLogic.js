@@ -11,7 +11,7 @@ async function findConnectedFruits(
   width = 10,
   height = 12
 ) {
-  const promise = await new Promise((resolve, reject) => {
+  const promise = new Promise((resolve, reject) => {
     const startFruit = gameFruitArr[startIndex].fruit; // Fruit type at starting cell
     const visited = new Set(); // Track visited indices
     const stack = [startIndex]; // DFS Depth first search algorith
@@ -88,7 +88,7 @@ async function removeAndShiftFruits(gameFruitArr, indicesToRemove) {
     }
     resolve(gameFruitArr);
   });
-  return promise;
+  return await promise;
 }
 
 export default async function gameCalculationsV1(userData, userId) {
