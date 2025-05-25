@@ -11,6 +11,17 @@ img {
   height: auto; /* Maintain aspect ratio */
 }
 
+#bonusFruit {
+  z-index: 90;
+  -webkit-user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  min-width: 49px;
+  width: calc((25%) + 5px); /* Adjust the 10px for spacing if necessary */
+  height: auto; /* Maintain aspect ratio */
+}
 /* Assuming this is the parent container of #gridWrapper */
 #parentContainer {
   display: flex;

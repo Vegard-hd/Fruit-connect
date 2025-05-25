@@ -1,3 +1,4 @@
+console.log("builder called");
 await Bun.build({
   entrypoints: ["public/index.js", "public/index.css"],
   outdir: "./public/build",

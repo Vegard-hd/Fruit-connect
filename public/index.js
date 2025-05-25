@@ -38,8 +38,67 @@ $(async function () {
     init = true;
   });
 
+  async function updateBonusFruitProgress(data) {
+    const maxTime = 5000; // Maximum time for bonus fruit
+    const progressBar = document.getElementById("bonusFruitProgress");
+    const convertedData = Number.parseInt(data.bonusfruit.remaining);
+    // Calculate percentage
+    let percentage = (convertedData / maxTime) * 100;
+    if (percentage > 97) {
+      let tl = gsap.timeline();
+
+      tl.to(progressBar, {
+        opacity: 1,
+        width: 100,
+        duration: 0.1, // Smooth expansion
+      }).to(progressBar, {
+        opacity: 0,
+        width: 0,
+        duration: 0.01, // Fade out quickly
+      });
+
+      percentage = 100;
+
+      progressBar.textContent = `${Math.round(percentage)}%`;
+    } else {
+      gsap.to(progressBar, {
+        opacity: 1,
+        width: `${percentage}%`,
+        duration: 0.01, // Adjust duration for smooth transition
+        onUpdate: () => {
+          // Update the text inside the progress bar
+          progressBar.textContent = `${Math.round(percentage)}%`;
+        },
+      });
+    }
+  }
+
   // Listen for messages
+  let tempBonusFruitSrc;
   socket.on("message", async (data) => {
+    if (data?.bonusfruit) {
+      updateBonusFruitProgress(data);
+      // update bonu<sfruit
+      console.log(data.bonusfruit.remaining);
+      if (!tempBonusFruitSrc || tempBonusFruitSrc !== data.bonusfruit.src) {
+        console.log(data.bonusfruit);
+        const bonusFruit = $("#bonusFruit");
+
+        $(bonusFruit).attr("src", data.bonusfruit.src);
+        tempBonusFruitSrc = data.bonusfruit.src;
+
+        await gsap.fromTo(
+          bonusFruit,
+          { scale: 2, opacity: 0 },
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 0.5,
+            ease: "elastic.out(1.5, 0.5)",
+          }
+        );
+      }
+    }
     if (data?.topScores) {
       updateScoreboard(data?.topScores);
     }

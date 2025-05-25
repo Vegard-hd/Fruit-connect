@@ -3,6 +3,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import { FruitService } from "./services/FruitService";
 import gameCalculationsV1 from "./functions/gameLogic";
+import { bonusFruit } from "./functions/bonusFruit";
 import path from "path";
 import { fileURLToPath } from "url";
 import morgan from "morgan";
@@ -15,6 +16,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 import indexRouter from "./routes/index";
+import apiRouter from "./routes/api";
 const app = express();
 
 // view engine setup
@@ -55,9 +57,10 @@ app.use(
 );
 
 app.use("/favicon.ico", express.static(path.join(__dirname, "favicon.ico")));
-
+app.use("/api", apiRouter);
 app.use("/", indexRouter);
 
+let intervalStarted = false;
 io.on("connection", async (socket) => {
   let gameEnded;
   try {
@@ -85,7 +88,18 @@ io.on("connection", async (socket) => {
       movesLeft: data?.moves,
       score: data?.gamescore,
     });
-
+    if (intervalStarted === false) {
+      // game ticker
+      intervalStarted = true;
+      setInterval(() => {
+        let currentBonusFruit = bonusFruit();
+        // socket.send(currentBonusFruit);
+        // io.sockets.emit("hi", "everyone");
+        socket.broadcast.emit("message", {
+          bonusfruit: currentBonusFruit,
+        });
+      }, 500);
+    }
     socket.on("message", async (message) => {
       try {
         const result = await gameCalculationsV1(message, newGameId);
