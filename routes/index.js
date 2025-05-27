@@ -33,7 +33,7 @@ router.get("/completed", async (req, res, next) => {
       await mongoService.getOne(game),
       await mongoService.getTop10(),
     ]).catch((e) => {
-      throw new Error("Failed to get data in /completed router", error);
+      console.warn("Failed to get data in /completed router", error);
     });
     res.render("completed", {
       gameData: gameData,
@@ -56,13 +56,13 @@ router.get("/creategame", async (req, res, next) => {
   res.redirect(`/game?id=${gameId}`);
 });
 
-//actual websocket game
 router.get("/game", async (req, res, next) => {
   const { id } = req.query;
   try {
     // const gameId
     if (id) {
       const gameData = await fruitService.getOne(id);
+      // checks if game exists / in progress
       if (!gameData) {
         const gameCompleted = await completedService.getOne(id);
         return res.redirect(`/completed?game=${gameCompleted.id}`);

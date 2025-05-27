@@ -50,7 +50,7 @@ $(async function () {
       tl.to(progressBar, {
         opacity: 1,
         width: 100,
-        duration: 0.1, // Smooth expansion
+        duration: 0.05, // Smooth expansion
       }).to(progressBar, {
         opacity: 0,
         width: 0,
@@ -78,16 +78,13 @@ $(async function () {
   socket.on("message", async (data) => {
     if (data?.bonusfruit) {
       updateBonusFruitProgress(data);
-      // update bonu<sfruit
-      console.log(data.bonusfruit.remaining);
       if (!tempBonusFruitSrc || tempBonusFruitSrc !== data.bonusfruit.src) {
-        console.log(data.bonusfruit);
         const bonusFruit = $("#bonusFruit");
 
         $(bonusFruit).attr("src", data.bonusfruit.src);
         tempBonusFruitSrc = data.bonusfruit.src;
 
-        await gsap.fromTo(
+        gsap.fromTo(
           bonusFruit,
           { scale: 2, opacity: 0 },
           {

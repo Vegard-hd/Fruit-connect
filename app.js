@@ -2,15 +2,11 @@ import express from "express";
 import { createServer } from "http";
 import { Server } from "socket.io";
 import { FruitService } from "./services/FruitService";
-import gameCalculationsV1 from "./functions/gameLogic";
-import { bonusFruit } from "./functions/bonusFruit";
+
 import path from "path";
 import { fileURLToPath } from "url";
 import morgan from "morgan";
 import compression from "compression";
-
-import CompletedGamesService from "./services/MongoClient";
-const completedGamesService = new CompletedGamesService();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -30,7 +26,10 @@ const server = createServer(app);
 const io = new Server(server, {
   cookie: false,
 });
-const fruitService = new FruitService();
+
+//init WebsocketService
+import { WebsocketService } from "./services/WebsocketService";
+const websocketService = new WebsocketService();
 
 // Serve static files
 app.use("/", express.static(path.join(__dirname, "public")));
@@ -39,12 +38,6 @@ app.use(
   express.static(path.join(__dirname, "node_modules/bootstrap/dist/js")),
   express.static(path.join(__dirname, "node_modules/socket.io/client-dist"))
 );
-/* app.use(
-  "/supabase",
-  express.static(
-    path.join(__dirname, "node_modules/@supabase/supabase-js/dist/module")
-  )
-); */
 app.use(
   "/css",
   express.static(path.join(__dirname, "node_modules/bootstrap/dist/css"))
@@ -60,93 +53,8 @@ app.use("/favicon.ico", express.static(path.join(__dirname, "favicon.ico")));
 app.use("/api", apiRouter);
 app.use("/", indexRouter);
 
-let intervalStarted = false;
 io.on("connection", async (socket) => {
-  let gameEnded;
-  try {
-    if (socket.request.headers.referer.split("/").at(-1) === "completed") {
-      return;
-    }
-    const newGameId = socket.request.headers.referer.split("?id=").at(-1);
-
-    if (!newGameId) {
-      throw new Error("Failed to get game id");
-    }
-    const [data, topScores] = await Promise.all([
-      await fruitService.getOne(newGameId),
-      await completedGamesService.getTop10(),
-    ]).catch((e) => {
-      console.warn(e);
-      throw new Error("Failed to retrieve data");
-    });
-    if (data?.completed === 1) {
-      return; //game is completed do nothing
-    }
-    socket.emit("initial-data", {
-      data: data?.fruitgrid,
-      topScores: topScores,
-      movesLeft: data?.moves,
-      score: data?.gamescore,
-    });
-    if (intervalStarted === false) {
-      // game ticker
-      intervalStarted = true;
-      setInterval(() => {
-        let currentBonusFruit = bonusFruit();
-        // socket.send(currentBonusFruit);
-        // io.sockets.emit("hi", "everyone");
-        socket.broadcast.emit("message", {
-          bonusfruit: currentBonusFruit,
-        });
-      }, 500);
-    }
-    socket.on("message", async (message) => {
-      try {
-        const result = await gameCalculationsV1(message, newGameId);
-        const updatedGameData = await fruitService.getOne(newGameId);
-        if (updatedGameData.moves <= 0) {
-          gameEnded = true;
-        }
-        socket.emit("message", {
-          result: result,
-          score: updatedGameData.gamescore,
-          movesLeft: updatedGameData.moves,
-        });
-        if (gameEnded === true) {
-          //gameEnded
-          await Promise.all([
-            await fruitService.deleteOne(newGameId), //removes from sqlite in memory
-            await completedGamesService.saveGame(
-              //inserts into completed_games.db
-              data?.username ?? newGameId,
-              Number.parseInt(updatedGameData.gamescore, 10),
-              newGameId
-            ),
-          ])
-            .catch((e) => {
-              console.warn(e);
-            })
-            .then(() => {
-              socket.emit("message", { gameEnded: true });
-            })
-            .finally(() => {
-              socket.disconnect(true);
-            });
-        }
-      } catch (err) {
-        console.warn(err);
-        socket.emit("error", `Something went wrong, error: ${err}`);
-      }
-    });
-
-    // Handle disconnection
-    socket.on("disconnect", () => {
-      // TODO: clean up sqlite inmemory db
-    });
-  } catch (error) {
-    console.error("Error in socket connection:", error);
-    socket.emit("error", "Internal server error");
-  }
+  websocketService.websocketHandler(socket);
 });
 
 // Start the server
