@@ -8,23 +8,20 @@ export class WebsocketService {
     this.fruitService = new FruitService();
     this.completedGamesService = new CompletedGamesService();
   }
-  static {}
-  intervalStarted = false;
+  static {
+    WebsocketService.intervalStarted = false;
+  }
 
   async #bonusFruitInterval(socket) {
-    console.log(this.intervalStarted);
-    console.log("bonusfruitinterval called");
-    if (this.intervalStarted === false) {
+    if (WebsocketService.intervalStarted === false) {
       // game ticker
-      this.intervalStarted = true;
+      WebsocketService.intervalStarted = true;
       let currentBonusFruit = bonusFruit();
       socket.broadcast.emit("message", {
         bonusfruit: currentBonusFruit,
       });
       setInterval(() => {
         currentBonusFruit = bonusFruit();
-        // socket.send(currentBonusFruit);
-        // io.sockets.emit("hi", "everyone");
         socket.broadcast.emit("message", {
           bonusfruit: currentBonusFruit,
         });
