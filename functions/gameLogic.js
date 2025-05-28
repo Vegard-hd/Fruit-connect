@@ -145,7 +145,9 @@ export default async function gameCalculationsV1(userData, userId) {
       await fruitService.updateScore(score, userId),
       await fruitService.decrementMoves(userId),
     ]).catch((e) => {
-      throw new Error("Failed to write to the database");
+      throw new Error(
+        "Failed to write to the database in gameCalculationsV1 func"
+      );
     });
 
     const jsonNewDataAndFruit = JSON.stringify(indexPlusNewFruit); // sends only indexes to remove + newFruits

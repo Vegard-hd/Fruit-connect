@@ -1,4 +1,9 @@
+body {
+  background-color: #9370db;
+}
 img {
+  max-height: 49px;
+  max-width: 49px;
   z-index: 90;
   -webkit-user-drag: none;
   user-select: none;

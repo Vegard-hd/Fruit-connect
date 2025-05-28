@@ -4,46 +4,27 @@ const { randomUUID } = new ShortUniqueId({
   dictionary: "alpha_upper",
 });
 
-export function randomFruit() {
-  const pear = `/assets/pear.svg`;
-  const mango = `/assets/mango.svg`;
-  const lemon = `/assets/lemon.svg`;
-  const orange = `/assets/orange.svg`;
-  const apple = `/assets/apple.svg`;
-  const plum = `/assets/plum.svg`;
-  let svgSrc;
-  let fruitType;
-  let rNum = Math.floor(Math.random() * 6 + 1);
+const fruits = [
+  { name: "pineapple", path: "/assets/pineapple.png" },
+  { name: "blueberry", path: "/assets/blueberry.png" },
+  { name: "banana", path: "/assets/banana.png" },
+  { name: "mango", path: "/assets/mango.png" },
+  { name: "lemon", path: "/assets/lemon.png" },
+  { name: "orange", path: "/assets/orange.png" },
+  { name: "apple", path: "/assets/apple.png" },
+  { name: "plum", path: "/assets/plum.png" },
+];
 
-  switch (rNum) {
-    case 1:
-      svgSrc = pear;
-      fruitType = "pear";
-      break;
-    case 2:
-      svgSrc = mango;
-      fruitType = "mango";
-      break;
-    case 3:
-      svgSrc = lemon;
-      fruitType = "lemon";
-      break;
-    case 4:
-      svgSrc = orange;
-      fruitType = "orange";
-      break;
-    case 5:
-      svgSrc = apple;
-      fruitType = "apple";
-      break;
-    case 6:
-      svgSrc = plum;
-      fruitType = "plum";
-      break;
-  }
+export function randomFruit() {
+  // Generate a random index based on the length of the fruits array
+  const randomIndex = Math.floor(Math.random() * fruits.length);
+
+  // Get the random fruit object from the array
+  const selectedFruit = fruits[randomIndex];
+
   return {
-    fruit: fruitType,
-    src: svgSrc,
+    fruit: selectedFruit.name,
+    src: selectedFruit.path,
     id: randomUUID(),
   };
 }

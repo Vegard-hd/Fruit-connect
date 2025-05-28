@@ -14,7 +14,6 @@ export function bonusFruit() {
     } while (newFruit === currentFruit); // Ensures new fruit is different
 
     currentFruit = newFruit;
-    console.log("New fruit:", currentFruit);
   }
   //   return [currentFruit.fruit, currentFruit.src, remaining];
   return {

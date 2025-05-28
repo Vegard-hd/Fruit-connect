@@ -54,6 +54,12 @@ app.use("/api", apiRouter);
 app.use("/", indexRouter);
 
 io.on("connection", async (socket) => {
+  //TODO: Add a timer function for each game
+  // giving players more time / moves on 3 equal fruits
+
+  //TODO: Add 1 more fruit to increase the difficulty. (banana)
+  
+
   websocketService.websocketHandler(socket);
 });
 
