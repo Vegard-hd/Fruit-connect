@@ -3,6 +3,8 @@ let lastUpdate = Date.now();
 let currentFruit = randomFruit();
 let interval = 5000;
 export function bonusFruit() {
+  //TODO; pass currentFruit as argument
+
   let now = Date.now();
   let remaining = now - lastUpdate;
 

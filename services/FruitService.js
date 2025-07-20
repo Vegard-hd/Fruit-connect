@@ -1,10 +1,14 @@
 import FruitGrid from "../functions/fruitGrid.js";
 import { Database } from "bun:sqlite";
 const db = new Database(":memory:");
-/* Create the fruit table if it doesn't exist */
-await db.run(
-  "CREATE TABLE IF NOT EXISTS fruit (id TEXT PRIMARY KEY, fruitgrid BLOB NOT NULL, moves INTEGER NOT NULL DEFAULT 10, username TEXT, gamescore INTEGER NOT NULL DEFAULT 0)"
-);
+
+await db.run(`CREATE TABLE IF NOT EXISTS fruit
+  (id TEXT PRIMARY KEY, fruitgrid BLOB NOT NULL,
+  moves INTEGER NOT NULL DEFAULT 10, username TEXT,
+  gamescore INTEGER NOT NULL DEFAULT 0,
+  created_at DATETIME,
+  timeleft DATETIME 
+  )`);
 
 const fruitGrid = new FruitGrid();
 
@@ -13,27 +17,32 @@ export class FruitService {
     this.db = db;
   }
 
-  /*   async create(gameId) {
-    const newFruitGrid = new fruitGrid.initGrid(true);
-    console.log(newFruitGrid);
-
-    const fruitgridStringify = fruitGrid.stringifyFruits(newFruitGrid);
-
+  async getTimeLeft(gameId) {
     const stmt = this.db.prepare(
-      "INSERT INTO fruit (id, fruitgrid) VALUES ($1, $2)"
+      "SELECT created_at, timeleft FROM fruit WHERE id = ?"
     );
-    return await stmt.get(gameId, fruitgridStringify);
-  } */
+    return await stmt.get(gameId);
+  }
 
   async createWithUser(gameId, username) {
+    const currentTime = new Date();
+
+    const defaultExpireTime = new Date(currentTime.getTime() + 10 * 1000);
+
     const newFruitGrid = fruitGrid.initGrid(true);
 
     const fruitgridStringify = fruitGrid.stringifyFruits(newFruitGrid);
 
     const stmt = this.db.prepare(
-      "INSERT INTO fruit (id, fruitgrid, username) VALUES ($1, $2, $3)"
+      "INSERT INTO fruit (id, fruitgrid, username, created_at, timeleft) VALUES ($1, $2, $3, $4, $5)"
     );
-    return await stmt.get(gameId, fruitgridStringify, username);
+    return await stmt.get(
+      gameId,
+      fruitgridStringify,
+      username,
+      currentTime.toISOString(),
+      defaultExpireTime.toISOString()
+    );
   }
 
   async update(fruitGrid, gameId) {

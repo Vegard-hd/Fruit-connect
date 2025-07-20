@@ -2,10 +2,8 @@ import { Router } from "express";
 const router = Router();
 
 import { randomFruit } from "../functions/randomFruit";
-import { FruitService } from "../services/FruitService";
-import { CompletedGamesService } from "../services/CompletedGamesService";
-const fruitService = new FruitService();
-const completedService = new CompletedGamesService();
+// import { FruitService } from "../services/FruitService";
+// const fruitService = new FruitService();
 import MongoService from "../services/MongoClient";
 const mongoService = new MongoService();
 

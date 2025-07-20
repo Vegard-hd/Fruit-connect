@@ -5,9 +5,8 @@ const { randomUUID } = new ShortUniqueId({
   length: 12,
 });
 import { FruitService } from "../services/FruitService";
-import { CompletedGamesService } from "../services/CompletedGamesService";
 const fruitService = new FruitService();
-const completedService = new CompletedGamesService();
+
 import MongoService from "../services/MongoClient";
 const mongoService = new MongoService();
 
@@ -28,13 +27,16 @@ router.get("/completed", async (req, res, next) => {
   try {
     const { game } = req.query;
 
-    if (!game) next("Game does not exist");
+    if (!game) throw new Error("Game does not exist");
     const [gameData, top20] = await Promise.all([
       await mongoService.getOne(game),
       await mongoService.getTop10(),
     ]).catch((e) => {
       console.warn("Failed to get data in /completed router", error);
     });
+
+    if (!gameData || !top20) throw new Error("Game does not exist");
+
     res.render("completed", {
       gameData: gameData,
       top20: top20,
@@ -64,8 +66,9 @@ router.get("/game", async (req, res, next) => {
       const gameData = await fruitService.getOne(id);
       // checks if game exists / in progress
       if (!gameData) {
-        const gameCompleted = await completedService.getOne(id);
-        return res.redirect(`/completed?game=${gameCompleted.id}`);
+        const gameCompleted = await mongoService.getOne(id);
+        console.log("gameData from mongo client is ... ", gameCompleted);
+        return res.redirect(`/completed?game=${gameCompleted.gameId}`);
       }
       return res.render("index", {
         gameId: id,
