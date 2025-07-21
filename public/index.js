@@ -76,6 +76,16 @@ $(async function () {
   // Listen for messages
   let tempBonusFruitSrc;
   socket.on("message", async (data) => {
+    if (data?.timeRemaining) {
+      const convertedTimeLeft = (data?.timeRemaining / 1000).toFixed(1);
+      console.log(convertedTimeLeft.length);
+      if (convertedTimeLeft.length !== 3) {
+        $("#timeLeftDisplay").text("0");
+      } else {
+        $("#timeLeftDisplay").text(convertedTimeLeft);
+      }
+    }
+
     if (data?.bonusfruit) {
       updateBonusFruitProgress(data);
       if (!tempBonusFruitSrc || tempBonusFruitSrc !== data.bonusfruit.src) {

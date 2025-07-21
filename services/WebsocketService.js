@@ -7,7 +7,6 @@ export class WebsocketService {
   constructor() {
     this.fruitService = new FruitService();
     this.completedGamesService = new CompletedGamesService();
-    this.saveGame = this.completedGamesService.getOne.bind(this.newGameId);
   }
   static {
     WebsocketService.intervalStarted = false;
@@ -20,10 +19,13 @@ export class WebsocketService {
     const currentTime = new Date().valueOf();
     return timeleft - currentTime;
   }
-  gameLoop(handleGameEnded, gameId) {
+  #gameLoop(handleGameEnded, gameId, socket) {
     let thisIntervalName = `${gameId}-interval`;
     thisIntervalName = setInterval(async () => {
       let timeRemaining = await this.#getGameTimeRemaining(gameId);
+      socket.emit("message", {
+        timeRemaining: timeRemaining,
+      });
       console.log("Game loop", timeRemaining);
       if (timeRemaining <= 0 || !timeRemaining) {
         await handleGameEnded();
@@ -87,9 +89,7 @@ export class WebsocketService {
 
   async websocketHandler(socket) {
     try {
-      var currentTime = new Date().valueOf();
-      var gameEnded = false;
-      var timeRemaining = 0;
+      var gameTimeLeft = 10;
 
       if (socket.request.headers.referer.split("/").at(-1) === "completed") {
         return;
@@ -124,10 +124,9 @@ export class WebsocketService {
         newGameId
       );
 
-      this.gameLoop(bindHandleGameComplete, newGameId);
+      this.#gameLoop(bindHandleGameComplete, newGameId, socket);
 
       socket.on("message", async (message) => {
-        console.log(currentTime);
         try {
           const result = await gameCalculationsV1(message, newGameId);
 
